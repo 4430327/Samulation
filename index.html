@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>محاكاة الصف الثاني بكالوريا</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1e3a8a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:#121826;color:#e2e8f0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:8px;min-height:100vh}
+.credit{font-size:12px;color:#94a3b8;text-align:center;padding:6px 4px 10px}
+.credit a{color:#38bdf8;text-decoration:none;font-weight:bold;direction:ltr;unicode-bidi:embed}
+.container{display:flex;flex-direction:column;gap:10px;background:#1e293b;padding:10px;border-radius:12px;max-width:1000px;width:100%}
+.tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.tab{padding:9px 4px;border:1px solid #334155;border-radius:6px;background:#0f172a;color:#94a3b8;font-size:13px;font-weight:bold;cursor:pointer}
+.tab.on{background:#3b82f6;color:#fff;border-color:#3b82f6}
+.cvs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px}
+canvas{width:100%;height:auto;aspect-ratio:1;background:#0f172a;border:1px solid #334155;border-radius:8px}
+.controls{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:6px;flex-wrap:wrap}
+.btn{flex:1;padding:10px;border:none;border-radius:6px;font-weight:bold;font-size:14px;cursor:pointer;color:#fff;background:#475569;min-width:60px}
+.p{background:#3b82f6}.d{background:#ef4444}.w{background:#f59e0b}
+.grp{background:#0f172a;border:1px solid #334155;border-radius:6px;padding:8px;display:flex;flex-direction:column;gap:4px}
+label{font-size:13px;color:#94a3b8;display:flex;justify-content:space-between}
+label b{color:#38bdf8;direction:ltr}
+input[type=range]{width:100%;accent-color:#3b82f6;height:26px}
+.note{font-size:11px;color:#fbbf24}
+#detail{background:#0f172a;border:1px solid #334155;border-radius:6px;padding:10px;font-size:13px;line-height:1.9}
+#detail code{direction:ltr;unicode-bidi:embed;color:#38bdf8;font-family:ui-monospace,monospace}
+#detail .warn{color:#fbbf24;font-weight:bold}
+.legend{display:flex;flex-direction:column;gap:4px;font-size:12px;background:#0f172a;padding:8px;border-radius:6px}
+.li{display:flex;align-items:center;gap:6px}.li i{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.hide{display:none!important}
+.law{direction:ltr;text-align:left;background:#172554;border:1px solid #3b82f6;border-radius:6px;padding:8px 10px;margin-bottom:6px;font-family:ui-monospace,monospace;font-size:13px;line-height:1.8;color:#fde047;font-weight:bold}
+.cst{font-size:12px;color:#94a3b8;direction:ltr;text-align:left;margin-bottom:6px}
+#secs,#tabs{grid-template-columns:1fr}
+select{width:100%;padding:11px 8px;border-radius:6px;background:#0f172a;color:#e2e8f0;border:1px solid #3b82f6;font-size:14px;font-weight:bold}
+#detail hr{border:0;border-top:1px solid #334155;margin:6px 0}
+#detail{font-size:17px;line-height:1.7;padding:12px}
+#detail div{font-size:17px;padding:3px 0;overflow-x:auto;overflow-y:hidden}
+#detail div.warn{white-space:normal}
+#detail code{font-size:1em;font-weight:bold;color:#7dd3fc}
+.law{font-size:17px;padding:10px 12px}
+.law div{font-size:17px;white-space:nowrap;padding:1px 0}
+#splash{position:fixed;inset:0;z-index:99;background:radial-gradient(circle at 50% 30%,#1e3a8a,#0b1220 70%);display:flex;align-items:center;justify-content:center;padding:20px}
+.sp-box{max-width:520px;width:100%;text-align:center;display:flex;flex-direction:column;gap:14px;align-items:center}
+.sp-ic{font-size:64px;line-height:1}
+.sp-box h1{font-size:30px;line-height:1.35;color:#f8fafc}
+.sp-sub{font-size:13px;color:#93c5fd;line-height:1.8}
+.sp-by{font-size:20px;color:#e2e8f0}.sp-by b{color:#fde047}
+.sp-tel{font-size:22px;color:#38bdf8;text-decoration:none;font-weight:bold;direction:ltr;unicode-bidi:embed;border:1px solid #38bdf8;border-radius:30px;padding:8px 22px}
+.sp-sub-box{display:flex;flex-direction:column;gap:10px;align-items:center;margin-top:6px}
+.yt{display:block;padding:12px 28px;border-radius:30px;background:#dc2626;color:#fff;font-size:18px;font-weight:bold;text-decoration:none}
+#okBtn{padding:12px 28px;border:none;border-radius:30px;background:#16a34a;color:#fff;font-size:17px;font-weight:bold;cursor:pointer}
+#okBtn:disabled,#go:disabled{opacity:.4;cursor:not-allowed}
+#inst{padding:11px 26px;border:1px solid #38bdf8;border-radius:30px;background:transparent;color:#38bdf8;font-size:16px;font-weight:bold;cursor:pointer}
+#go{margin-top:10px;padding:14px 36px;font-size:19px;font-weight:bold;border:none;border-radius:30px;background:#3b82f6;color:#fff;cursor:pointer}
+@media(min-width:760px){.container{flex-direction:row-reverse}.stage{flex:1}.controls{width:320px}}
+</style>
+</head>
+<body>
+<div id="splash"><div class="sp-box"><div class="sp-ic">⚛</div><h1>محاكاة الصف الثاني بكالوريا</h1>
+<div class="sp-sub">السرعة الزاوية والخطية • الحركة الدائرية • الحركة الانتقالية<br>المقذوفات • المتجهات والسرعة النسبية • كمية الحركة والدفع</div>
+<div class="sp-by">إعداد: <b>محمد ابو المجد</b></div><a class="sp-tel" href="tel:01283055517">📞 01283055517</a>
+<div id="subBox" class="sp-sub-box"><a class="yt" id="ytBtn" href="https://youtube.com/@mohamed-abo-elmagd?sub_confirmation=1" target="_blank" rel="noopener">① ▶ اشترك في القناة</a><button id="okBtn" disabled>② اشتركت ✓</button><div class="sp-sub" id="subNote">اشترك في القناة، ثم ارجع واضغط «اشتركت» لتفتح المحاكاة</div></div>
+<button id="go" disabled>ابدأ المحاكاة</button>
+<button id="inst" class="hide">📲 ثبّت التطبيق على جهازك</button>
+<div class="sp-sub">للتثبيت: من قائمة المتصفح اختر «إضافة إلى الشاشة الرئيسية» (آيفون: زر المشاركة ثم الإضافة)</div></div></div>
+<div class="container">
+ <div class="stage">
+  <div class="tabs" id="secs"></div><div class="tabs" id="tabs"></div>
+  <div class="cvs"><canvas id="cvSide" width="400" height="400"></canvas><canvas id="cvTop" width="400" height="400"></canvas></div>
+  <div id="detail"></div>
+ </div>
+ <div class="controls">
+  <div class="row"><button id="play" class="btn p">⏸ إيقاف</button><button id="rst" class="btn d">إعادة ضبط</button><button id="cut" class="btn w hide">✂ قطع الخيط</button></div>
+  <div class="grp"><label><span id="jumpL">إيقاف عند وضعية:</span></label><div class="row" id="jumps"></div>
+   <label id="angRow"><span id="angL">تحريك الزاوية يدوياً</span><b id="angV">0°</b></label><input type="range" id="sAng" min="0" max="360" step="1" value="0"></div>
+  <div class="grp" id="gV"><label><span id="vLab">السرعة</span><b id="vVal"></b></label><input type="range" id="sV"><div class="note" id="vNote"></div></div>
+  <div class="grp hide" id="gH"><label><span>الارتفاع عن رأس المخروط (h)</span><b id="hVal"></b></label><input type="range" id="sH" min="0.5" max="2" step="0.05" value="1.2"></div>
+  <div class="grp hide" id="gA"><label><span>زاوية الجدار مع الأفقي (θ)</span><b id="aVal"></b></label><input type="range" id="sA" min="25" max="65" step="1" value="45"></div>
+  <div class="grp hide" id="dyn"></div>
+  <div class="grp"><label><span>بطء / سرعة الزمن</span><b id="sVal">0.30x</b></label><input type="range" id="sS" min="0.1" max="1" step="0.05" value="0.3"></div>
+  <div class="legend" id="legend"></div>
+ </div>
+</div>
+<div class="credit">إعداد: محمد ابو المجد — هاتف: <a href="tel:01283055517">01283055517</a> — <a href="https://youtube.com/@mohamed-abo-elmagd?sub_confirmation=1" target="_blank" rel="noopener">▶ قناتي على يوتيوب</a></div>
+<script>
+const $=i=>document.getElementById(i);
+const g=9.81,PI=Math.PI,r=1.8,RH=1.5;
+const c1=$('cvSide').getContext('2d'),c2=$('cvTop').getContext('2d');
+const sV=$('sV'),sH=$('sH'),sA=$('sA'),sS=$('sS'),sAng=$('sAng');
+const M={
+ string:{t:'رأسية بخيط',vert:1,N:'T',leg:[['#22c55e','السرعة المماسية (v)'],['#ef4444','الوزن (mg)'],['#3b82f6','الشد (T) نحو المركز'],['#a855f7','مركبة الوزن الشعاعية (mg·cosθ)'],['#f59e0b','مركبة الوزن المماسية (mg·sinθ)']],jp:[['الأسفل',0],['الجانب',90],['الأعلى',180]]},
+ loop:{t:'رأسية داخل مسار دائري',vert:1,N:'N',leg:[['#22c55e','السرعة المماسية (v)'],['#ef4444','الوزن (mg)'],['#3b82f6','رد فعل المسار (N) نحو المركز'],['#a855f7','مركبة الوزن الشعاعية (mg·cosθ)'],['#f59e0b','مركبة الوزن المماسية (mg·sinθ)']],jp:[['الأسفل',0],['الجانب',90],['الأعلى',180]]},
+ horiz:{t:'أفقية بخيط (سطح أملس)',vert:0,leg:[['#22c55e','السرعة (v) — ثابتة المقدار'],['#ef4444','الوزن (mg)'],['#06b6d4','رد فعل السطح (N) = mg'],['#3b82f6','الشد (T) = القوة المركزية']],jp:[['0°',0],['90°',90],['180°',180],['270°',270]]},
+ cone:{t:'داخل مخروط أملس',vert:0,leg:[['#22c55e','السرعة (v)'],['#ef4444','الوزن (mg)'],['#3b82f6','رد فعل الجدار (N) عمودي على الجدار'],['#f59e0b','N·sinθ = القوة المركزية'],['#06b6d4','N·cosθ = يعادل الوزن']],jp:[['0°',0],['90°',90],['180°',180],['270°',270]]}
+};
+let mode='string',paused=false,S={};
+const D={t:0,op:0},P={},f2=(x,n=2)=>(+x).toFixed(n);
+function reset(){D.t=0;D.cut=null;S={ang:0,proj:0,dir:1,x:0,y:0,vx:0,vy:0,cut:0,px:0,py:0,cx:0,cy:0,E:(+sV.value)**2/2-g*r};$('cut').textContent='✂ قطع الخيط';}
+function setMode(k){
+ mode=k;const m=M[k],dyn=!!m.dyn;paused=false;upPlay();
+$('secs').innerHTML='<select id="selSec">'+SEC.map(([sc,n])=>`<option value="${sc}"${sc===m.sec?' selected':''}>${n}</option>`).join('')+'</select>';
+ $('selSec').onchange=e=>setMode(SECF[e.target.value]);
+ $('tabs').innerHTML='<select id="selMode">'+Object.keys(M).filter(q=>M[q].sec===m.sec).map(q=>`<option value="${q}"${q===k?' selected':''}>${M[q].t}</option>`).join('')+'</select>';
+ $('selMode').onchange=e=>setMode(e.target.value);
+ $('jumps').innerHTML='';m.jp.forEach(([l,d])=>{const b=document.createElement('button');b.className='btn';b.textContent=l;b.onclick=()=>{paused=true;upPlay();m.jump?m.jump(d):setAngle(d);};$('jumps').appendChild(b);});
+ $('jumpL').textContent=m.jl||'إيقاف عند وضعية:';$('cvSide').style.touchAction=k==='racket'?'none':'';
+ $('legend').innerHTML=m.leg.map(([c,t])=>`<div class="li"><i style="background:${c}"></i><span>${t}</span></div>`).join('');
+ $('cvTop').classList.toggle('hide',!dyn&&!!m.vert);
+ $('gH').classList.toggle('hide',k!=='cone');$('gA').classList.toggle('hide',k!=='cone');
+ $('gV').classList.toggle('hide',dyn||k==='cone');$('cut').classList.toggle('hide',k!=='horiz');
+ $('dyn').classList.toggle('hide',!dyn);$('angL').textContent=dyn?'تحريك الزمن يدوياً':'تحريك الزاوية يدوياً';
+ $('angRow').classList.toggle('hide',!!m.noscrub);sAng.classList.toggle('hide',!!m.noscrub);
+ if(dyn){$('dyn').innerHTML=m.pr.map(([id,l,mn,mx,st,v])=>`<label><span>${l}</span><b id="l_${id}">${v}</b></label><input type="range" id="p_${id}" min="${mn}" max="${mx}" step="${st}" value="${v}">`).join('');
+  m.pr.forEach(([id,,,,,v])=>{const el=$('p_'+id);P[id]=v;el.oninput=()=>{P[id]=+el.value;$('l_'+id).textContent=el.value;D.t=0;};});}
+ else if(m.vert){sV.min=4;sV.max=10;sV.step=.1;sV.value=7.5;$('vLab').textContent='السرعة عند الأسفل (v₀)';}
+ else if(k==='horiz'){sV.min=1;sV.max=8;sV.step=.1;sV.value=4;$('vLab').textContent='سرعة الجسم (v)';}
+ reset();upLabels();
+}
+function upLabels(){
+ $('vVal').textContent=(+sV.value).toFixed(1)+' m/s';$('hVal').textContent=(+sH.value).toFixed(2)+' m';
+ $('aVal').textContent=sA.value+'°';$('sVal').textContent=(+sS.value).toFixed(2)+'x';
+ const v=+sV.value;
+ $('vNote').textContent=M[mode].vert?(v<Math.sqrt(2*g*r)?'يتأرجح ولا يصل لمستوى المركز':v<Math.sqrt(5*g*r)?'يفقد التماس قبل الأعلى (الحد الأدنى للدورة √(5gr) = 9.39 m/s)':'دورة كاملة (v₀ ≥ √(5gr) = 9.39 m/s)'):'';
+}
+function setAngle(d){if(M[mode].dyn){D.t=d/360*M[mode].T(P);return;}S.ang=d*PI/180;if(M[mode].vert)S.proj=0;S.cut=0;$('cut').textContent='✂ قطع الخيط';}
+function upPlay(){$('play').textContent=paused?'▶ تشغيل':'⏸ إيقاف';}
+$('play').onclick=()=>{paused=!paused;upPlay();};
+$('rst').onclick=()=>{reset();};
+$('cut').onclick=()=>{
+ if(S.cut){S.cut=0;$('cut').textContent='✂ قطع الخيط';return;}
+ const G=geom(),a=S.ang;S.cut=1;S.cx=S.px=G.R*Math.cos(a);S.cy=S.py=G.R*Math.sin(a);S.vx=-G.v*Math.sin(a);S.vy=G.v*Math.cos(a);$('cut').textContent='↺ ربط الخيط';};
+sAng.oninput=()=>{paused=true;upPlay();setAngle(+sAng.value);};
+sV.oninput=()=>{upLabels();if(M[mode].vert)reset();};
+sH.oninput=sA.oninput=sS.oninput=upLabels;
+
+function geom(){
+ if(mode==='horiz'){const v=+sV.value;return{R:RH,v,Fc:v*v/RH};}
+ const h=+sH.value,a=+sA.value*PI/180,R=h/Math.tan(a);return{R,v:Math.sqrt(g*h),Fc:g*Math.tan(a),h,a};
+}
+function stepV(d){
+ if(!S.proj){
+  const a=S.ang,y=-r*Math.cos(a),v2=Math.max(0,2*(S.E-g*y)),v=Math.sqrt(v2),T=v2/r+g*Math.cos(a);
+  if(T<0){S.proj=1;S.x=r*Math.sin(a);S.y=y;S.vx=S.dir*v*Math.cos(a);S.vy=S.dir*v*Math.sin(a);return;}
+  const na=a+S.dir*v/r*d;
+  if(2*(S.E+g*r*Math.cos(na))<=0)S.dir*=-1;else S.ang=na;
+ }else{
+  S.vy-=g*d;S.x+=S.vx*d;S.y+=S.vy*d;
+  if(Math.hypot(S.x,S.y)>=r){const a=Math.atan2(S.x,-S.y),vt=S.vx*Math.cos(a)+S.vy*Math.sin(a);S.ang=a;S.dir=vt>=0?1:-1;S.E=vt*vt/2+g*S.y;S.proj=0;}
+ }
+}
+function stepH(d){
+ const G=geom();
+ if(S.cut){S.px+=S.vx*d;S.py+=S.vy*d;if(Math.hypot(S.px,S.py)>6){S.px=S.cx;S.py=S.cy;}}
+ else S.ang+=G.v/G.R*d;
+}
+function arrow(c,x,y,fx,fy,s,col,lab,dash,w){
+ const tx=x+fx*s,ty=y-fy*s,dx=tx-x,dy=ty-y;if(Math.hypot(dx,dy)<3)return;
+ const a=Math.atan2(dy,dx);c.save();c.strokeStyle=c.fillStyle=col;c.lineWidth=w||2.5;const hs=8+(w||2.5)*(w?2.2:0);if(dash)c.setLineDash([5,4]);
+ c.beginPath();c.moveTo(x,y);c.lineTo(tx,ty);c.stroke();c.setLineDash([]);
+ c.beginPath();c.moveTo(tx,ty);c.lineTo(tx-hs*Math.cos(a-.5),ty-hs*Math.sin(a-.5));c.lineTo(tx-hs*Math.cos(a+.5),ty-hs*Math.sin(a+.5));c.closePath();c.fill();
+ if(lab){c.font=(w?'bold 14px':'bold 12px')+' system-ui';c.fillText(lab,tx+9*Math.cos(a)+(w?-30:0),ty+9*Math.sin(a)+(w?16:4));}c.restore();
+}
+function arc(c,x,y,rad,a0,a1,col,txt,lr,lw){c.save();c.strokeStyle=c.fillStyle=col;c.lineWidth=lw||3;c.beginPath();c.arc(x,y,rad,a0,a1);c.stroke();if(txt){const m=(a0+a1)/2;c.font='bold 13px system-ui';c.fillText(txt,x+lr*Math.cos(m)-16,y+lr*Math.sin(m)+4);}c.restore();}
+const WC='#ef4444',AC='#fde047';
+function wArrow(c,x,y,s){arrow(c,x,y,0,-g,s,WC,'mg = '+g.toFixed(2)+' N',0,5);}
+function ball(c,x,y){c.beginPath();c.arc(x,y,12,0,2*PI);c.fillStyle='#38bdf8';c.fill();c.strokeStyle='#0284c7';c.lineWidth=2;c.stroke();}
+function dotv(c,x,y){c.save();c.strokeStyle=c.fillStyle='#22c55e';c.lineWidth=2;c.beginPath();c.arc(x,y,9,0,2*PI);c.stroke();c.beginPath();c.arc(x,y,3,0,2*PI);c.fill();c.font='bold 12px system-ui';c.fillText('v (نحو القارئ)',x+13,y+4);c.restore();}
+const line=(c,a,b,x,y,col,w,dash)=>{c.save();c.strokeStyle=col;c.lineWidth=w;if(dash)c.setLineDash(dash);c.beginPath();c.moveTo(a,b);c.lineTo(x,y);c.stroke();c.restore();};
+
+function drawV(){
+ const c=c1,pp=125/r,o=200,loop=mode==='loop';c.clearRect(0,0,400,400);
+ c.beginPath();c.arc(o,o,r*pp,0,2*PI);c.strokeStyle=loop?'#475569':'#334155';c.lineWidth=loop?10:3;if(!loop)c.setLineDash([6,6]);c.stroke();c.setLineDash([]);
+ let x,y,v,T=0,a=S.ang,D=$('detail'),nm=M[mode].N;
+ if(S.proj){x=S.x;y=S.y;v=Math.hypot(S.vx,S.vy);}
+ else{x=r*Math.sin(a);y=-r*Math.cos(a);v=Math.sqrt(Math.max(0,2*(S.E-g*y)));T=v*v/r+g*Math.cos(a);}
+ const px=o+x*pp,py=o-y*pp;
+ if(!loop&&!S.proj){line(c,o,o,px,py,'#64748b',2);}
+ c.beginPath();c.arc(o,o,4,0,2*PI);c.fillStyle='#64748b';c.fill();
+ const fs=3;
+ if(S.proj){arrow(c,px,py,S.vx,S.vy,8,'#22c55e','v');}
+ else{
+  const ca=Math.cos(a),sa=Math.sin(a);
+  arrow(c,px,py,S.dir*v*ca,S.dir*v*sa,8,'#22c55e','v');
+  arrow(c,px,py,g*ca*sa,-g*ca*ca,fs,'#a855f7','mg·cosθ',1);
+  arrow(c,px,py,-g*sa*ca,-g*sa*sa,fs,'#f59e0b','mg·sinθ',1);
+  arrow(c,px,py,-T*sa,T*ca,fs,'#3b82f6',nm);
+ }
+ ball(c,px,py);
+ wArrow(c,px,py,fs);
+ if(!S.proj){
+  const th=((a%(2*PI))+2*PI)%(2*PI),t0=PI/2-th,td=Math.round(th*180/PI);
+  line(c,o,o,o,o+r*pp+14,'#94a3b8',1.5,[4,4]);
+  if(loop)line(c,o,o,px,py,'#64748b',1.5,[3,4]);
+  arc(c,o,o,42,t0,PI/2,AC,'θ = '+td+'°',62);
+  const ex=px+34*Math.sin(th),ey=py+34*Math.cos(th);
+  line(c,px,py,ex,ey,'#94a3b8',1.5,[3,3]);
+  arc(c,px,py,24,t0,PI/2,AC,'θ',38,2);c.fillStyle='#e2e8f0';c.font='bold 12px system-ui';c.fillText('r = '+r+' m',(o+px)/2+10,(o+py)/2-6);
+ }
+ const deg=((a*180/PI)%360+360)%360,h=y+r;
+ if(S.proj)D.innerHTML=`<div class="warn">⚠ ${nm} = 0: ${loop?'فقد الجسم التماس مع المسار':'ارتخى الخيط'}، والجسم الآن مقذوف يتحرك بتأثير الوزن فقط (قطع مكافئ) حتى يعود للمسار.</div><div>v = <code>${v.toFixed(2)} m/s</code></div>`;
+ else D.innerHTML=`<div>الزاوية <code>θ = ${deg.toFixed(0)}°</code> ، الارتفاع <code>h = ${h.toFixed(2)} m</code></div>
+ <div>① الطاقة تحدد السرعة: <code>v = ${v.toFixed(2)} m/s</code></div>
+ <div>② القوة المركزية المطلوبة: <code>mv²/r = (1×${v.toFixed(2)}²)/${r} = ${(v*v/r).toFixed(1)} N</code></div>
+ <div>③ مركبة الوزن الشعاعية: <code>mg·cosθ = ${(g*Math.cos(a)).toFixed(1)} N</code> ${Math.cos(a)>=0?'(تبتعد عن المركز)':'(نحو المركز)'}</div>
+ <div>④ <code>${nm} = mv²/r + mg·cosθ = ${(v*v/r).toFixed(1)} ${Math.cos(a)<0?'−':'+'} ${Math.abs(g*Math.cos(a)).toFixed(1)} = ${T.toFixed(1)} N</code></div>
+ <div>مركبة الوزن المماسية <code>mg·sinθ = ${(g*Math.sin(a)).toFixed(1)} N</code> هي التي تغيّر مقدار السرعة.</div>`;
+ if(!paused)sAng.value=deg;$('angV').textContent=deg.toFixed(0)+'°';
+}
+function drawTop(G,bx,by,cutting){
+ const c=c2,o=200,pp=Math.min(100,170/G.R);c.clearRect(0,0,400,400);
+ c.fillStyle='#94a3b8';c.font='12px system-ui';c.fillText('منظر علوي',8,16);
+ c.beginPath();c.arc(o,o,G.R*pp,0,2*PI);c.strokeStyle='#334155';c.lineWidth=3;c.setLineDash([6,6]);c.stroke();c.setLineDash([]);
+ c.beginPath();c.arc(o,o,4,0,2*PI);c.fillStyle='#64748b';c.fill();
+ const px=o+bx*pp,py=o-by*pp;
+ if(cutting){line(c,o+S.cx*pp,o-S.cy*pp,px,py,'#64748b',1.5,[4,4]);}
+ else if(mode==='horiz')line(c,o,o,px,py,'#64748b',2);
+ else line(c,o,o,px,py,'#64748b',1.5,[3,5]);
+ const a=S.ang;
+ if(!cutting){const ph=((a%(2*PI))+2*PI)%(2*PI);line(c,o,o,o+G.R*pp+16,o,'#94a3b8',1.5,[4,4]);arc(c,o,o,34,-ph,0,AC,'φ = '+Math.round(ph*180/PI)+'°',54);}
+ arrow(c,px,py,cutting?S.vx:-G.v*Math.sin(a),cutting?S.vy:G.v*Math.cos(a),18,'#22c55e','v');
+ if(!cutting)arrow(c,px,py,-Math.cos(a),-Math.sin(a),Math.min(4,70/Math.max(G.Fc,1))*G.Fc,mode==='horiz'?'#3b82f6':'#f59e0b',mode==='horiz'?'T = Fc':'Fc');
+ if(!cutting){c.fillStyle='#e2e8f0';c.font='bold 12px system-ui';c.fillText('R = '+f2(G.R)+' m',o+bx*pp/2+6,o-by*pp/2-6);}
+ ball(c,px,py);
+}
+function drawH(){
+ const c=c1,G=geom(),a=S.ang;c.clearRect(0,0,400,400);
+ c.fillStyle='#94a3b8';c.font='12px system-ui';c.fillText('منظر جانبي (مستوى يدور مع الجسم)',8,16);
+ line(c,30,262,380,262,'#475569',4);line(c,70,225,70,262,'#64748b',5);
+ const bx=70+G.R*140,by=248,fs=4;
+ line(c,70,by,bx,by,'#64748b',2);c.fillStyle='#e2e8f0';c.font='bold 12px system-ui';c.fillText('R = '+RH+' m',(70+bx)/2-25,284);
+ arrow(c,bx,by,-G.Fc,0,fs,'#3b82f6','T');arrow(c,bx,by,0,g,fs,'#06b6d4','N');
+ dotv(c,bx+8,by-62);ball(c,bx,by);wArrow(c,bx,by,fs);
+ const cut=S.cut;
+ const bxt=cut?S.px:G.R*Math.cos(a),byt=cut?S.py:G.R*Math.sin(a);
+ drawTop(G,bxt,byt,cut);
+ $('detail').innerHTML=cut?`<div class="warn">✂ بعد قطع الخيط لم تعد هناك قوة نحو المركز (T = 0)، فينطلق الجسم في خط مستقيم مماسياً للدائرة بنفس السرعة <code>${G.v.toFixed(1)} m/s</code> (قانون نيوتن الأول).</div>`:
+ `<div>① رأسياً لا حركة: <code>N = mg = ${g.toFixed(2)} N</code> (الوزن يعادله رد فعل السطح)</div>
+ <div>② أفقياً الشد هو القوة المركزية الوحيدة: <code>T = mv²/R = (1×${G.v.toFixed(1)}²)/${G.R} = ${G.Fc.toFixed(1)} N</code></div>
+ <div>③ الشد عمودي على السرعة دائماً فلا يبذل شغلاً، فتبقى <code>v = ${G.v.toFixed(2)} m/s</code> ثابتة والتغيّر في الاتجاه فقط.</div>
+ <div>الزمن الدوري <code>T₀ = 2πR/v = ${(2*PI*G.R/G.v).toFixed(2)} s</code></div>`;
+ const dg=((a*180/PI)%360+360)%360;if(!paused)sAng.value=dg;$('angV').textContent=dg.toFixed(0)+'°';
+}
+function drawC(){
+ const c=c1,G=geom(),a=S.ang,th=G.a,tn=Math.tan(th);c.clearRect(0,0,400,400);
+ c.fillStyle='#94a3b8';c.font='12px system-ui';c.fillText('منظر جانبي (مستوى يدور مع الجسم)',8,16);
+ const Ht=2.2,ap=[200,370],pp=Math.min(300/Ht,170*tn/Ht),wx=Ht/tn*pp,wy=Ht*pp;
+ line(c,ap[0],ap[1],ap[0]+wx,ap[1]-wy,'#64748b',4);line(c,ap[0],ap[1],ap[0]-wx,ap[1]-wy,'#475569',4);
+ line(c,ap[0],ap[1],ap[0],ap[1]-wy-8,'#334155',1.5,[4,4]);line(c,ap[0]-wx*.2,ap[1],ap[0]+wx+14,ap[1],'#94a3b8',1.5,[4,4]);
+ const bx=ap[0]+G.R*pp,by=ap[1]-G.h*pp,N=g/Math.cos(th),fs=Math.min(4,90/N),sn=Math.sin(th),cs=Math.cos(th);
+ line(c,ap[0],by,bx,by,'#64748b',1.5,[3,4]);c.fillStyle='#94a3b8';c.font='12px system-ui';c.fillText('R = '+f2(G.R)+' m',(ap[0]+bx)/2-30,by-6);
+ arrow(c,bx,by,-N*sn,N*cs,fs,'#3b82f6','N');
+ arrow(c,bx,by,-N*sn,0,fs,'#f59e0b','N·sinθ',1);
+ arrow(c,bx,by,0,N*cs,fs,'#06b6d4','N·cosθ',1);
+ dotv(c,bx+14,by+60);ball(c,bx,by);wArrow(c,bx,by,fs);
+ arc(c,ap[0],ap[1],70,-th,0,AC,'θ = '+Math.round(th*180/PI)+'°',94,3);
+ drawTop(G,G.R*Math.cos(a),G.R*Math.sin(a),0);
+ const td=Math.round(th*180/PI);
+ $('detail').innerHTML=`<div>① رأسياً (لا تسارع): <code>N·cosθ = mg</code> ← <code>N = 9.81 / cos${td}° = ${N.toFixed(1)} N</code></div>
+ <div>② أفقياً (نحو المحور): <code>N·sinθ = mv²/R</code> ← <code>Fc = mg·tanθ = ${G.Fc.toFixed(1)} N</code></div>
+ <div>③ بقسمة ② على ①: <code>tanθ = v²/(gR)</code> ← <code>v² = gR·tanθ = g·h</code> ← <code>v = ${G.v.toFixed(2)} m/s</code></div>
+ <div>نصف القطر <code>R = h / tanθ = ${G.h.toFixed(2)} / tan${td}° = ${G.R.toFixed(2)} m</code> ، الزمن الدوري <code>2πR/v = ${(2*PI*G.R/G.v).toFixed(2)} s</code></div>
+ <div>لكل ارتفاع سرعة واحدة فقط تبقي الجسم على الدائرة. وكلما زادت θ صار المخروط أضيق وزادت N.</div>`;
+ const dg=((a*180/PI)%360+360)%360;if(!paused)sAng.value=dg;$('angV').textContent=dg.toFixed(0)+'°';
+}
+let last=performance.now();
+function frame(t){
+ const dt=Math.min((t-last)/1000,.1);last=t;
+ if(M[mode].dyn){dynFrame(dt);requestAnimationFrame(frame);return;}
+ if(!paused){const d=dt*(+sS.value),n=Math.ceil(d/.004);for(let i=0;i<n;i++){if(M[mode].vert)stepV(d/n);else if(mode==='horiz')stepH(d/n);else S.ang+=geom().v/geom().R*d/n;}}
+ if(M[mode].vert)drawV();else if(mode==='horiz')drawH();else drawC();
+ circInfo();
+ requestAnimationFrame(frame);
+}
+const SEC=[['ang','السرعة الزاوية والخطية'],['circ','الحركة الدائرية'],['trans','الحركة الانتقالية'],['proj','المقذوفات'],['vec','المتجهات والسرعة النسبية'],['mom','كمية الحركة والدفع']];
+const SECF={ang:'angv',circ:'string',trans:'acc',proj:'proj1',vec:'vec',mom:'col'};
+[['string','Fc = mv²/r<br>T − mg·cosθ = mv²/r  ⇒  T = mv²/r + mg·cosθ<br>v² = v₀² − 2gh  (حفظ الطاقة)'],
+ ['loop','Fc = mv²/r<br>N − mg·cosθ = mv²/r  (N = 0 ⇒ يفقد التماس)<br>الدورة الكاملة تلزمها v₀ ≥ √(5gr)'],
+ ['horiz','T = Fc = mv²/R ، N = mg<br>v = ωR ، الزمن الدوري T₀ = 2πR/v'],
+ ['cone','N·cosθ = mg ، N·sinθ = mv²/R<br>v² = gR·tanθ = g·h ، R = h / tanθ  (θ مع الأفقي)']].forEach(([k,l])=>{M[k].sec='circ';M[k].law=l;});
+function lawBox(l){return '<div class="law">'+l.split('<br>').map(x=>'<div>'+x+'</div>').join('')+'</div>';}
+function fitLines(){const d=$('detail');if(!d.querySelectorAll)return;
+ const eq=[...d.querySelectorAll('div')].filter(e=>!e.classList.contains('warn')&&!e.classList.contains('cst')&&!e.classList.contains('law')&&(e.querySelector('code')||e.closest('.law')));
+ eq.forEach(e=>{e.style.whiteSpace='nowrap';});
+ const m=eq.map(e=>[e,parseFloat(getComputedStyle(e).fontSize),e.scrollWidth,e.clientWidth]);
+ m.forEach(([e,fs,sw,cw])=>{if(sw>cw+1)e.style.fontSize=Math.max(10,fs*cw/sw)+'px';});}
+$('go').onclick=()=>{$('splash').classList.add('hide');};
+{let dp=null;
+ if(typeof window!=='undefined'&&window.addEventListener){window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').classList.remove('hide');});}
+ $('inst').onclick=async()=>{if(!dp)return;dp.prompt();try{await dp.userChoice;}catch(e){}dp=null;$('inst').classList.add('hide');};
+ if(typeof navigator!=='undefined'&&'serviceWorker' in navigator&&typeof location!=='undefined'&&location.protocol.indexOf('http')===0)navigator.serviceWorker.register('sw.js').catch(()=>{});}
+{const yt=$('ytBtn'),ok=$('okBtn'),go=$('go');let done=false,started=false;
+ try{done=localStorage.getItem('subOK')==='1';}catch(e){}
+ const unlock=()=>{go.disabled=false;$('subBox').classList.add('hide');};
+ if(done)unlock();
+ yt.addEventListener('click',()=>{if(started)return;started=true;let n=10;ok.textContent='② اشتركت ✓ ('+n+')';
+  const iv=setInterval(()=>{n--;if(n<=0){clearInterval(iv);ok.disabled=false;ok.textContent='② اشتركت ✓';}else ok.textContent='② اشتركت ✓ ('+n+')';},1000);});
+ ok.addEventListener('click',()=>{try{localStorage.setItem('subOK','1');}catch(e){}unlock();});}
+function circInfo(){const R=mode==='cone'?'R = h / tanθ = '+f2(geom().R)+' m':mode==='horiz'?'R = '+RH+' m':'r = '+r+' m';
+ $('detail').innerHTML=lawBox(M[mode].law)+`<div class="cst">m = 1 kg ، g = 9.81 m/s² ، ${R}</div>`+$('detail').innerHTML;fitLines();}
+function setParam(id,v){const e=$('p_'+id);v=Math.max(+e.min,Math.min(+e.max,v));e.value=v;P[id]=v;$('l_'+id).textContent=f2(v,1);D.t=0;}
+function dynFrame(dt){const m=M[mode],T=m.T(P);
+ if(!paused&&T>0)D.t=Math.min(T,D.t+dt*(+sS.value)*2);
+ c1.clearRect(0,0,400,400);c2.clearRect(0,0,400,400);
+ m.draw(D.t,P,T);
+ $('detail').innerHTML=lawBox(m.law)+m.info(D.t,P,T);fitLines();
+ if(T>0){if(!paused)sAng.value=D.t/T*360;$('angV').textContent=f2(D.t)+' s';}}
+function plots(list,T,t){const c=c2,H=400/list.length;
+ list.forEach((q,i)=>{const y0=i*H+10,h=H-26,x0=46,w=340,N=60,ys=[];let lo=1e9,hi=-1e9;
+  for(let k=0;k<=N;k++){const y=q.f(T*k/N);ys.push(y);lo=Math.min(lo,y);hi=Math.max(hi,y);}
+  if(hi-lo<1e-6){lo-=1;hi+=1;}const pd=(hi-lo)*.1;lo-=pd;hi+=pd;
+  const X=s=>x0+w*s/T,Y=y=>y0+h-(y-lo)/(hi-lo)*h;
+  c.strokeStyle='#334155';c.lineWidth=1;c.strokeRect(x0,y0,w,h);
+  if(lo<0&&hi>0){c.beginPath();c.moveTo(x0,Y(0));c.lineTo(x0+w,Y(0));c.stroke();}
+  c.strokeStyle=q.col;c.lineWidth=2.5;c.beginPath();ys.forEach((y,k)=>{const px=X(T*k/N);k?c.lineTo(px,Y(y)):c.moveTo(px,Y(y));});c.stroke();
+  c.setLineDash([4,4]);c.strokeStyle='#94a3b8';c.lineWidth=1;c.beginPath();c.moveTo(X(t),y0);c.lineTo(X(t),y0+h);c.stroke();c.setLineDash([]);
+  const yy=q.f(t);c.fillStyle=q.col;c.beginPath();c.arc(X(t),Y(yy),5,0,2*PI);c.fill();
+  c.font='bold 12px system-ui';c.fillText(q.n+' = '+f2(yy),x0+6,y0+14);
+  c.fillStyle='#94a3b8';c.font='10px system-ui';c.fillText(f2(hi,1),4,y0+10);c.fillText(f2(lo,1),4,y0+h);});
+ c.fillStyle='#94a3b8';c.font='11px system-ui';c.fillText('t (s)',368,396);}
+const kinPl=q=>[{n:'x (m)',f:q.fx,col:'#38bdf8'},{n:'v (m/s)',f:q.fv,col:'#22c55e'},{n:'a (m/s²)',f:q.fa,col:'#ef4444'}];
+function drawTrack(t,q){const c=c1,N=40,gy=250;let lo=0,hi=1;
+ for(let k=0;k<=N;k++){const x=q.fx(q.T*k/N);lo=Math.min(lo,x);hi=Math.max(hi,x);}
+ const pp=Math.min(30,320/Math.max(hi-lo,1)),ox=40-lo*pp,st=Math.max(1,Math.ceil((hi-lo)/10));
+ line(c,10,gy+14,395,gy+14,'#475569',4);c.fillStyle='#94a3b8';c.font='10px system-ui';
+ for(let k=Math.ceil(lo);k<=hi;k+=st){line(c,ox+k*pp,gy+14,ox+k*pp,gy+22,'#94a3b8',1.5);c.fillText(k,ox+k*pp-4,gy+34);}
+ const bx=ox+q.fx(t)*pp,v=q.fv(t),a=q.fa(t);c.fillStyle='#38bdf8';c.fillRect(bx-20,gy-12,40,26);
+ arrow(c,bx,gy-26,v,0,Math.min(8,110/Math.max(Math.abs(v),1)),'#22c55e','v');
+ arrow(c,bx,gy-56,a,0,Math.min(14,100/Math.max(Math.abs(a),1)),'#ef4444','a');return{bx,gy};}
+const kinLeg=[['#22c55e','السرعة (v)'],['#ef4444','التسارع (a)']];
+M.acc={t:'تسارع ثابت',sec:'trans',dyn:1,leg:kinLeg,jp:[['البداية',0],['المنتصف',1],['النهاية',2]],
+ pr:[['v0','السرعة الابتدائية v₀ (m/s)',-10,20,.5,2],['a','التسارع a (m/s²)',-5,5,.5,2]],
+ law:'v = v₀ + a·t<br>x = v₀·t + ½·a·t²<br>v² = v₀² + 2·a·x   (a = 0 ⇒ سرعة ثابتة)',
+ T:()=>10,q:P=>({fx:t=>P.v0*t+P.a*t*t/2,fv:t=>P.v0+P.a*t,fa:()=>P.a,T:10}),
+ draw(t,P){const q=this.q(P);drawTrack(t,q);plots(kinPl(q),10,t);},
+ info(t,P){const v=P.v0+P.a*t,x=P.v0*t+P.a*t*t/2;return `<div>v = v₀ + at = ${P.v0} + (${P.a})×${f2(t)} = <code>${f2(v)} m/s</code></div><div>x = v₀t + ½at² = ${P.v0}×${f2(t)} + ½×(${P.a})×${f2(t)}² = <code>${f2(x)} m</code></div><div>تحقق: v² − v₀² = <code>${f2(v*v-P.v0*P.v0)}</code> = 2ax = <code>${f2(2*P.a*x)}</code></div>`;},
+ jump(i){D.t=i*5;}};
+M.inc={t:'مستوى مائل أملس',sec:'trans',dyn:1,jp:[['البداية',0],['المنتصف',1],['النهاية',2]],
+ leg:[[WC,'الوزن (mg)'],['#f59e0b','mg·sinθ (مسببة للحركة)'],['#a855f7','mg·cosθ'],['#3b82f6','رد الفعل N']],
+ pr:[['th','زاوية الميل θ (°)',10,60,1,30],['m','الكتلة m (kg)',1,10,.5,2]],
+ law:'a = g·sinθ  (لا تعتمد على الكتلة)<br>N = mg·cosθ ، F = mg·sinθ<br>v = a·t ، s = ½·a·t²',
+ T:P=>Math.sqrt(12/(g*Math.sin(P.th*PI/180))),
+ q(P){const a=g*Math.sin(P.th*PI/180);return{fx:t=>a*t*t/2,fv:t=>a*t,fa:()=>a,T:this.T(P),a};},
+ draw(t,P){const c=c1,th=P.th*PI/180,m=P.m,L=6,q=this.q(P),s=q.fx(t),sn=Math.sin(th),cs=Math.cos(th);
+  const pp=Math.min(55,330/(L*cs),270/(L*sn)),tx=40,ty=360-L*sn*pp,bx=tx+L*cs*pp;
+  c.beginPath();c.moveTo(tx,ty);c.lineTo(bx,360);c.lineTo(tx,360);c.closePath();c.fillStyle='#1e293b';c.fill();c.strokeStyle='#64748b';c.lineWidth=3;c.stroke();
+  const sx=tx+s*pp*cs+sn*14,sy=ty+s*pp*sn-cs*14;
+  c.save();c.translate(sx,sy);c.rotate(th);c.fillStyle='#38bdf8';c.fillRect(-14,-14,28,28);c.restore();
+  const fs=Math.min(3,85/(m*g)),W=m*g;
+  arrow(c,sx,sy,W*sn*cs,-W*sn*sn,fs,'#f59e0b','mg·sinθ',1);
+  arrow(c,sx,sy,-W*cs*sn,-W*cs*cs,fs,'#a855f7','mg·cosθ',1);
+  arrow(c,sx,sy,W*cs*sn,W*cs*cs,fs,'#3b82f6','N');
+  arrow(c,sx,sy,0,-W,fs,WC,'mg = '+f2(W)+' N',0,5);
+  arc(c,bx,360,42,PI,PI+th,AC,'θ = '+P.th+'°',64);
+  plots(kinPl(q),q.T,t);},
+ info(t,P){const th=P.th*PI/180,a=g*Math.sin(th),W=P.m*g;return `<div>a = g·sinθ = 9.81×sin${P.th}° = <code>${f2(a)} m/s²</code> (جرّب تغيير الكتلة: a لا تتغير)</div><div>N = mg·cosθ = ${P.m}×9.81×cos${P.th}° = <code>${f2(W*Math.cos(th))} N</code></div><div>القوة المحركة mg·sinθ = <code>${f2(W*Math.sin(th))} N</code> = m·a</div><div>v = at = <code>${f2(a*t)} m/s</code> ، s = ½at² = <code>${f2(a*t*t/2)} m</code></div><div>الفرض: سطح أملس بلا احتكاك.</div>`;},
+ jump(i){D.t=i*this.T(P)/2;}};
+M.atw={t:'آلة أتوود',sec:'trans',dyn:1,jp:[['البداية',0],['المنتصف',1],['النهاية',2]],
+ leg:[[WC,'الوزن (m·g)'],['#3b82f6','الشد (T)']],
+ pr:[['m1','الكتلة m₁ (kg)',1,10,.5,2],['m2','الكتلة m₂ (kg)',1,10,.5,3]],
+ law:'a = (m₂ − m₁)·g / (m₁ + m₂)<br>T = 2·m₁·m₂·g / (m₁ + m₂)<br>m₂g − T = m₂a ، T − m₁g = m₁a',
+ aa:P=>(P.m2-P.m1)*g/(P.m1+P.m2),
+ T(P){const a=Math.abs(this.aa(P));return a>1e-3?Math.sqrt(6/a):6;},
+ q(P){const a=this.aa(P);return{fx:t=>a*t*t/2,fv:t=>a*t,fa:()=>a,T:this.T(P)};},
+ draw(t,P){const c=c1,q=this.q(P),s=q.fx(t)*30,Tn=2*P.m1*P.m2*g/(P.m1+P.m2),sf=60/(Math.max(P.m1,P.m2)*g);
+  c.beginPath();c.arc(200,60,40,PI,0);c.strokeStyle='#64748b';c.lineWidth=3;c.stroke();c.beginPath();c.arc(200,60,5,0,2*PI);c.fillStyle='#64748b';c.fill();
+  [[160,P.m1,230-s,'m₁'],[240,P.m2,230+s,'m₂']].forEach(([x,m,y,n])=>{const z=22+m*2.2;
+   line(c,x,60,x,y,'#94a3b8',2);c.fillStyle='#38bdf8';c.fillRect(x-z/2,y,z,z);c.fillStyle='#0f172a';c.font='bold 12px system-ui';c.fillText(n,x-8,y+z/2+4);
+   const cy=y+z/2;arrow(c,x,cy,0,-m*g,sf,WC,n+'g = '+f2(m*g)+' N',0,5);arrow(c,x,y,0,Tn,sf,'#3b82f6','T = '+f2(Tn)+' N');});
+  plots(kinPl(q),q.T,t);},
+ info(t,P){const a=this.aa(P),Tn=2*P.m1*P.m2*g/(P.m1+P.m2);return `<div>a = (m₂−m₁)g/(m₁+m₂) = (${P.m2}−${P.m1})×9.81/(${P.m1}+${P.m2}) = <code>${f2(a)} m/s²</code> ${a>0?'(m₂ تنزل)':a<0?'(m₁ تنزل)':'(اتزان)'}</div><div>T = 2m₁m₂g/(m₁+m₂) = <code>${f2(Tn)} N</code></div><div>تحقق للكتلة m₂: m₂g − T = <code>${f2(P.m2*g-Tn)}</code> = m₂a = <code>${f2(P.m2*a)}</code></div><div>الفرض: بكرة وخيط عديما الكتلة بلا احتكاك.</div>`;},
+ jump(i){D.t=i*this.T(P)/2;}};
+const pj=P=>{const th=(P.th||0)*PI/180,v=P.v0,vx=v*Math.cos(th),vy0=v*Math.sin(th),y0=P.y0,T=(vy0+Math.sqrt(vy0*vy0+2*g*y0))/g;return{th,vx,vy0,y0,T,H:y0+vy0*vy0/2/g,R:vx*T};};
+const pjDef={dyn:1,sec:'proj',leg:[['#22c55e','السرعة (v)'],['#38bdf8','المركبة الأفقية vx (ثابتة)'],['#f59e0b','المركبة الرأسية vy'],[WC,'الوزن (mg)']],
+ law:'x = v₀cosθ·t ، y = y₀ + v₀sinθ·t − ½gt²<br>vx = v₀cosθ (ثابتة) ، vy = v₀sinθ − g·t<br>T = 2v₀sinθ/g ، H = v₀²sin²θ/2g ، R = v₀²sin2θ/g  (y₀ = 0)',
+ T:P=>pj(P).T,
+ draw(t,P){const q=pj(P),c=c1,gy=360,gx=28,pp=Math.min(340/Math.max(q.R,1),280/Math.max(q.H,1));
+  const X=s=>gx+q.vx*s*pp,Y=s=>gy-(q.y0+q.vy0*s-g*s*s/2)*pp;
+  line(c,10,gy,395,gy,'#475569',3);if(q.y0>0)line(c,gx,gy,gx,gy-q.y0*pp,'#475569',3);
+  c.setLineDash([3,5]);c.strokeStyle='#64748b';c.lineWidth=2;c.beginPath();for(let k=0;k<=60;k++){const s=q.T*k/60;k?c.lineTo(X(s),Y(s)):c.moveTo(X(s),Y(s));}c.stroke();c.setLineDash([]);
+  const bx=X(t),by=Y(t),vy=q.vy0-g*t,sc=Math.min(5,70/Math.max(Math.hypot(q.vx,vy),1));
+  arrow(c,bx,by,q.vx,vy,sc,'#22c55e','v');arrow(c,bx,by,q.vx,0,sc,'#38bdf8','vx');arrow(c,bx,by,0,vy,sc,'#f59e0b','vy');
+  ball(c,bx,by);wArrow(c,bx,by,3);
+  if(q.th>0.02)arc(c,gx,gy-q.y0*pp,36,-q.th,0,AC,'θ = '+Math.round(q.th*180/PI)+'°',52);
+  plots([{n:'y (m)',f:s=>q.y0+q.vy0*s-g*s*s/2,col:'#38bdf8'},{n:'vx (m/s)',f:()=>q.vx,col:'#22c55e'},{n:'vy (m/s)',f:s=>q.vy0-g*s,col:'#f59e0b'}],q.T,t);},
+ info(t,P){const q=pj(P),vy=q.vy0-g*t;return `<div>x = v₀cosθ·t = ${f2(q.vx)}×${f2(t)} = <code>${f2(q.vx*t)} m</code></div><div>y = y₀ + v₀sinθ·t − ½gt² = <code>${f2(q.y0+q.vy0*t-g*t*t/2)} m</code></div><div>vx = <code>${f2(q.vx)} m/s</code> (ثابتة) ، vy = ${f2(q.vy0)} − 9.81×${f2(t)} = <code>${f2(vy)} m/s</code></div><div>v = √(vx²+vy²) = <code>${f2(Math.hypot(q.vx,vy))} m/s</code></div><hr><div>زمن الطيران <code>T = ${f2(q.T)} s</code> ، أقصى ارتفاع <code>H = ${f2(q.H)} m</code> ، المدى <code>R = ${f2(q.R)} m</code></div><div>الفرض: بدون مقاومة هواء.</div>`;}};
+M.proj1=Object.assign({t:'مقذوف بزاوية',jp:[['البداية',0],['القمة',1],['قبل الاصطدام',2]],
+ pr:[['v0','السرعة الابتدائية v₀ (m/s)',5,30,.5,20],['th','زاوية القذف θ (°)',5,90,1,45],['y0','ارتفاع الإطلاق y₀ (m)',0,20,1,0]],
+ jump(i){const q=pj(P);D.t=i==0?0:i==1?Math.min(q.vy0/g,q.T):q.T;}},pjDef);
+M.proj2=Object.assign({t:'مقذوف أفقي من ارتفاع',jp:[['البداية',0],['منتصف الزمن',1],['قبل الاصطدام',2]],
+ pr:[['v0','السرعة الأفقية v₀ (m/s)',2,25,.5,10],['y0','الارتفاع h (m)',5,40,1,20]],
+ jump(i){D.t=i*pj(P).T/2;}},pjDef);
+M.vec={t:'جمع وطرح المتجهات (ذيل بذيل)',sec:'vec',dyn:1,noscrub:1,jp:[['A + B',0],['A − B',1],['B − A',2]],jump(i){D.op=i;paused=false;upPlay();},T:()=>0,
+ leg:[['#22c55e','المتجه A'],['#f59e0b','المتجه B'],['#3b82f6','المحصلة / الفرق (R)'],['#fde047','الزوايا']],
+ pr:[['A','مقدار A',1,10,.5,6],['aA','زاوية A (°)',0,360,5,30],['B','مقدار B',1,10,.5,4],['aB','زاوية B (°)',0,360,5,120]],
+ law:'المتجهان من نقطة واحدة (ذيل بذيل)<br>الجمع: R = القطر ، الفرق A − B: من رأس B إلى رأس A<br>Rx = Ax ± Bx ، Ry = Ay ± By ، R = √(A² + B² ± 2AB·cosφ)',
+ vq(P){const d=PI/180,Ax=P.A*Math.cos(P.aA*d),Ay=P.A*Math.sin(P.aA*d),Bx=P.B*Math.cos(P.aB*d),By=P.B*Math.sin(P.aB*d),o=D.op,
+  Rx=o==0?Ax+Bx:o==1?Ax-Bx:Bx-Ax,Ry=o==0?Ay+By:o==1?Ay-By:By-Ay;return{Ax,Ay,Bx,By,Rx,Ry,R:Math.hypot(Rx,Ry),o};},
+ draw(t,P){const q=this.vq(P),c=c1,pp=170/Math.max(q.R,P.A,P.B,1),O=200,X=x=>O+x*pp,Y=y=>O-y*pp,nm=['A + B','A − B','B − A'][q.o],d=PI/180;
+  line(c,10,O,395,O,'#334155',1);line(c,O,10,O,395,'#334155',1);c.fillStyle='#64748b';c.font='11px system-ui';c.fillText('x',386,O-6);c.fillText('y',O+6,20);
+  if(q.o==0){line(c,X(q.Ax),Y(q.Ay),X(q.Ax+q.Bx),Y(q.Ay+q.By),'#f59e0b',1.5,[4,4]);line(c,X(q.Bx),Y(q.By),X(q.Ax+q.Bx),Y(q.Ay+q.By),'#22c55e',1.5,[4,4]);arrow(c,O,O,q.Rx,q.Ry,pp,'#3b82f6',nm,0,4);}
+  else{const fx=q.o==1?q.Bx:q.Ax,fy=q.o==1?q.By:q.Ay;arrow(c,O,O,q.Rx,q.Ry,pp,'#60a5fa88','',1);arrow(c,X(fx),Y(fy),q.Rx,q.Ry,pp,'#3b82f6',nm,0,4);}
+  arrow(c,O,O,q.Ax,q.Ay,pp,'#22c55e','A');arrow(c,O,O,q.Bx,q.By,pp,'#f59e0b','B');
+  const cA=-P.aA*d,cB=-P.aB*d,df=((cB-cA+PI)%(2*PI)+2*PI)%(2*PI)-PI,ph=Math.abs(df)*180/PI,thR=((Math.atan2(q.Ry,q.Rx))+2*PI)%(2*PI);
+  arc(c,O,O,26,-P.aA*d,0,'#86efac','αA='+P.aA+'°',44,2);arc(c,O,O,38,-P.aB*d,0,'#fcd34d','αB='+P.aB+'°',58,2);
+  arc(c,O,O,52,Math.min(cA,cA+df),Math.max(cA,cA+df),AC,'φ='+f2(ph,0)+'°',74,3);
+  const d2=c2,Q=150/Math.max(Math.abs(q.Rx),Math.abs(q.Ry),1);d2.fillStyle='#94a3b8';d2.font='12px system-ui';d2.fillText('مركبات المحصلة',8,16);
+  line(d2,10,O,395,O,'#334155',1);line(d2,O,10,O,395,'#334155',1);
+  arrow(d2,O,O,q.Rx,0,Q,'#22c55e','Rx',1);arrow(d2,O+q.Rx*Q,O,0,q.Ry,Q,'#f59e0b','Ry',1);arrow(d2,O,O,q.Rx,q.Ry,Q,'#3b82f6','R',0,4);
+  arc(d2,O,O,40,-thR,0,'#93c5fd','θ='+f2(thR*180/PI,0)+'°',62,2);},
+ info(t,P){const q=this.vq(P),nm=['A + B','A − B','B − A'][q.o],sg=q.o==0?'+':'−',th=((Math.atan2(q.Ry,q.Rx)*180/PI)+360)%360,ph=Math.acos((q.Ax*q.Bx+q.Ay*q.By)/(P.A*P.B))*180/PI,chk=Math.sqrt(P.A*P.A+P.B*P.B+(q.o==0?1:-1)*2*P.A*P.B*Math.cos(ph*PI/180));
+  const rx=q.o==2?'Bx − Ax':'Ax '+sg+' Bx',ry=q.o==2?'By − Ay':'Ay '+sg+' By';
+  return `<div>① ارسم A وB من نقطة الأصل نفسها (ذيل بذيل)</div><div>② Ax = A·cos${P.aA}° = <code>${f2(q.Ax)}</code> ، Ay = <code>${f2(q.Ay)}</code></div><div>③ Bx = B·cos${P.aB}° = <code>${f2(q.Bx)}</code> ، By = <code>${f2(q.By)}</code></div><div>④ ${nm}: Rx = ${rx} = <code>${f2(q.Rx)}</code> ، Ry = ${ry} = <code>${f2(q.Ry)}</code></div><div>⑤ R = √(Rx²+Ry²) = <code>${f2(q.R)}</code> ، θ = tan⁻¹(Ry/Rx) = <code>${f2(th,1)}°</code></div><div>تحقق: √(A²+B² ${sg} 2AB·cosφ) مع φ = ${f2(ph,1)}° ⇒ <code>${f2(chk)}</code></div>`+(q.o==0?'<div>الجمع: المحصلة هي قطر متوازي الأضلاع الخارج من الأصل.</div>':'<div>الفرق: السهم الأزرق يبدأ من رأس '+(q.o==1?'B وينتهي عند رأس A':'A وينتهي عند رأس B')+'، والسهم المتقطع من الأصل يساويه في المقدار والاتجاه.</div>');}};
+const rl=P=>{const b=P.be*PI/180,ux=-P.vb*Math.sin(b),uy=P.vb*Math.cos(b),gx=ux+P.vr,T=100/uy;return{ux,uy,gx,T,drift:gx*T};};
+M.rel={t:'قارب يعبر نهراً',sec:'vec',dyn:1,jp:[['أقصر زمن',0],['بدون انجراف',1]],
+ leg:[['#3b82f6','سرعة القارب بالنسبة للماء'],['#06b6d4','سرعة التيار (الماء بالنسبة للأرض)'],['#22c55e','سرعة القارب بالنسبة للأرض (المحصلة)']],
+ pr:[['vb','سرعة القارب بالنسبة للماء (m/s)',1,10,.5,5],['vr','سرعة التيار (m/s)',0,8,.5,3],['be','زاوية التوجيه β عن العمودي (°)',-60,60,1,0]],
+ law:'v(قارب/أرض) = v(قارب/ماء) + v(ماء/أرض)<br>t = W / (v_b·cosβ) ، الانجراف = (v_r − v_b·sinβ)·t<br>لا انجراف: sinβ = v_r / v_b   (عرض النهر W = 100 m)',
+ T:P=>rl(P).T,jump(i){setParam('be',i?(P.vr<P.vb?Math.asin(P.vr/P.vb)*180/PI:60):0);},
+ draw(t,P){const q=rl(P),c=c1,s=Math.min(2.4,320/Math.max(Math.abs(q.drift),100)),yT=200-50*s,yB=200+50*s,sx=q.drift>=0?30:370;
+  c.fillStyle='#0c4a6e';c.fillRect(0,yT,400,yB-yT);line(c,0,yT,400,yT,'#a3e635',4);line(c,0,yB,400,yB,'#a3e635',4);
+  for(let i=0;i<4;i++)arrow(c,40+i*95,(yT+yB)/2+(i%2?18:-18),1,0,18,'#38bdf866','');
+  const bx=sx+q.gx*t*s,by=yB-q.uy*t*s;
+  line(c,sx,yB,sx,yT,'#94a3b8',1.5,[4,4]);line(c,sx,yB,sx+q.drift*s,yT,'#22c55e',1.5,[5,4]);
+  c.fillStyle='#e2e8f0';c.font='12px system-ui';c.fillText('الانجراف = '+f2(q.drift,1)+' m',Math.min(260,Math.max(8,sx+q.drift*s/2-30)),yT-10);
+  arrow(c,bx,by,q.ux,q.uy,9,'#3b82f6','v قارب/ماء');arrow(c,bx,by,P.vr,0,9,'#06b6d4','v تيار');arrow(c,bx,by,q.gx,q.uy,9,'#22c55e','v قارب/أرض',0,4);
+  ball(c,bx,by);
+  plots([{n:'x (m) مع التيار',f:s2=>q.gx*s2,col:'#06b6d4'},{n:'y (m) عبر النهر',f:s2=>q.uy*s2,col:'#22c55e'}],q.T,t);},
+ info(t,P){const q=rl(P),vg=Math.hypot(q.gx,q.uy);return `<div>v قارب/ماء = (${f2(q.ux)} , ${f2(q.uy)}) ، v تيار = (${P.vr} , 0)</div><div>v قارب/أرض = <code>(${f2(q.gx)} , ${f2(q.uy)})</code> ⇒ المقدار <code>${f2(vg)} m/s</code></div><div>زمن العبور t = 100 / (${P.vb}×cos${P.be}°) = <code>${f2(q.T)} s</code></div><div>الانجراف = (${P.vr} − ${P.vb}×sin${P.be}°)×${f2(q.T)} = <code>${f2(q.drift)} m</code></div><div>أقصر زمن عند β = 0 (عمودياً). وللوصول إلى النقطة المقابلة وجّه القارب عكس التيار بزاوية sinβ = v_r/v_b.</div>`;}};
+const cl=P=>{const {m1,v1,m2,v2,e}=P,w=((24+4*m1)+(24+4*m2))/32,ap=v1-v2>1e-6,tc=ap?(10-w)/(v1-v2):1e9,
+ u1=((m1-e*m2)*v1+m2*(1+e)*v2)/(m1+m2),u2=((m2-e*m1)*v2+m1*(1+e)*v1)/(m1+m2);return{m1,v1,m2,v2,e,w,tc,u1,u2,T:ap?tc+3:6};};
+const cv1=(q,t)=>t<q.tc?q.v1:q.u1,cv2=(q,t)=>t<q.tc?q.v2:q.u2;
+const cx12=(q,t)=>t<q.tc?[-5+q.v1*t,5+q.v2*t]:[-5+q.v1*q.tc+q.u1*(t-q.tc),5+q.v2*q.tc+q.u2*(t-q.tc)];
+M.col={t:'التصادم في بعد واحد',sec:'mom',dyn:1,jp:[['قبل التصادم',0],['لحظة التصادم',1],['بعد التصادم',2]],
+ leg:[['#38bdf8','العربة 1'],['#f59e0b','العربة 2'],['#22c55e','السرعة']],
+ pr:[['m1','الكتلة m₁ (kg)',1,10,.5,2],['v1','السرعة v₁ (m/s)',-10,10,.5,5],['m2','الكتلة m₂ (kg)',1,10,.5,3],['v2','السرعة v₂ (m/s)',-10,10,.5,-2],['e','معامل الارتداد e (1 مرن ، 0 تام اللامرونة)',0,1,.05,1]],
+ law:'m₁v₁ + m₂v₂ = m₁v₁′ + m₂v₂′   (كمية الحركة محفوظة دائماً)<br>e = (v₂′ − v₁′) / (v₁ − v₂)<br>مرن: e = 1 والطاقة الحركية محفوظة ⏐ تام اللامرونة: e = 0 و v₁′ = v₂′',
+ T:P=>cl(P).T,jump(i){const q=cl(P);D.t=Math.min(q.T,i==0?0:i==1?q.tc:q.tc+1);},
+ draw(t,P){const q=cl(P),c=c1,[x1,x2]=cx12(q,t),gy=230,w1=24+4*q.m1,w2=24+4*q.m2;
+  line(c,5,gy+15,395,gy+15,'#475569',4);
+  [[x1,w1,'#38bdf8',q.m1,cv1(q,t),'v₁'],[x2,w2,'#f59e0b',q.m2,cv2(q,t),'v₂']].forEach(([x,w,col,m,v,n])=>{const px=200+x*16;
+   c.fillStyle=col;c.fillRect(px-w/2,gy-15,w,30);c.fillStyle='#0f172a';c.font='bold 12px system-ui';c.fillText(m+' kg',px-14,gy+4);
+   arrow(c,px,gy-30,v,0,6,'#22c55e',n+' = '+f2(v,1));});
+  const p=s=>q.m1*cv1(q,s)+q.m2*cv2(q,s),ke=s=>.5*q.m1*cv1(q,s)**2+.5*q.m2*cv2(q,s)**2;
+  plots([{n:'Σp = m₁v₁+m₂v₂',f:p,col:'#a855f7'},{n:'KE (J)',f:ke,col:'#ef4444'}],q.T,t);},
+ info(t,P){const q=cl(P),pb=q.m1*q.v1+q.m2*q.v2,pa=q.m1*q.u1+q.m2*q.u2,kb=.5*q.m1*q.v1**2+.5*q.m2*q.v2**2,ka=.5*q.m1*q.u1**2+.5*q.m2*q.u2**2;
+  if(q.tc>1e8)return '<div class="warn">العربة 1 لا تلحق بالعربة 2 (v₁ ≤ v₂) فلا يحدث تصادم. اجعل v₁ أكبر من v₂.</div>';
+  return `<div>قبل: Σp = ${q.m1}×${q.v1} + ${q.m2}×(${q.v2}) = <code>${f2(pb)} kg·m/s</code></div><div>v₁′ = <code>${f2(q.u1)}</code> ، v₂′ = <code>${f2(q.u2)} m/s</code></div><div>بعد: Σp = <code>${f2(pa)} kg·m/s</code> ⇒ محفوظة ✓</div><div>الطاقة الحركية: قبل <code>${f2(kb)} J</code> ← بعد <code>${f2(ka)} J</code> ، الفقد <code>${f2(kb-ka)} J</code></div><div>تحقق من e: (v₂′−v₁′)/(v₁−v₂) = <code>${f2((q.u2-q.u1)/(q.v1-q.v2))}</code></div>`;}};
+const im=P=>{const a0=P.F/P.m,vd=P.v0+a0*P.dt,xd=P.v0*P.dt+a0*P.dt*P.dt/2;return{a0,vd,T:P.dt+3,
+ fa:t=>t<P.dt?a0:0,fv:t=>t<P.dt?P.v0+a0*t:vd,fx:t=>t<P.dt?P.v0*t+a0*t*t/2:xd+vd*(t-P.dt)};};
+M.imp={t:'الدفع وكمية الحركة',sec:'mom',dyn:1,jp:[['البداية',0],['نهاية القوة',1],['النهاية',2]],
+ leg:[['#f59e0b','القوة F'],['#22c55e','السرعة (v)'],['#ef4444','التسارع (a)']],
+ pr:[['m','الكتلة m (kg)',1,10,.5,2],['F','القوة F (N)',1,50,1,20],['dt','زمن التأثير Δt (s)',.2,4,.1,1.5],['v0','السرعة الابتدائية v₁ (m/s)',-5,10,.5,0]],
+ law:'I = F·Δt   (= مساحة تحت منحنى F–t)<br>I = Δp = m·v₂ − m·v₁<br>a = F / m',
+ T:P=>P.dt+3,
+ draw(t,P){const q=im(P);const {bx,gy}=drawTrack(t,{...q,T:q.T});
+  if(t<P.dt){const s=Math.min(3,90/P.F);arrow(c1,bx-20-P.F*s,gy+2,P.F,0,s,'#f59e0b','F = '+P.F+' N',0,4);}
+  plots([{n:'F (N)',f:s=>s<P.dt?P.F:0,col:'#f59e0b'},{n:'p = mv (kg·m/s)',f:s=>P.m*q.fv(s),col:'#a855f7'}],q.T,t);},
+ info(t,P){const q=im(P),I=P.F*P.dt,dp=P.m*(q.vd-P.v0);return `<div>الدفع I = F·Δt = ${P.F}×${P.dt} = <code>${f2(I)} N·s</code></div><div>v₂ = v₁ + FΔt/m = ${P.v0} + ${f2(I)}/${P.m} = <code>${f2(q.vd)} m/s</code></div><div>Δp = m(v₂ − v₁) = ${P.m}×(${f2(q.vd)} − ${P.v0}) = <code>${f2(dp)} kg·m/s</code> = I ✓</div><div>الآن: v = <code>${f2(q.fv(t))} m/s</code> ، p = <code>${f2(P.m*q.fv(t))} kg·m/s</code></div><div>الفرض: لا احتكاك.</div>`;},
+ jump(i){D.t=i==0?0:i==1?P.dt:P.dt+3;}};
+
+const rq=P=>{const sB=D.dir?-1:1,uA=P.vA,uB=sB*P.vB,d=uA-uB,tm=d>1e-6?P.gap/d:-1;return{sB,uA,uB,d,tm,T:tm>0?Math.min(12,tm+2):8};};
+function bars(list,title){const c=c2,mx=Math.max(...list.map(b=>Math.abs(b[1])),1),bw=340/list.length-12,base=300;
+ c.fillStyle='#94a3b8';c.font='12px system-ui';c.fillText(title,8,16);line(c,20,base,390,base,'#475569',2);
+ list.forEach(([n,v,col],i)=>{const x=34+i*(bw+12),h=Math.abs(v)/mx*230;c.fillStyle=col;c.fillRect(x,base-h,bw,h);c.fillStyle='#e2e8f0';c.font='bold 12px system-ui';c.fillText(f2(v),x+2,base-h-6);c.fillText(n,x+2,base+18);});}
+M.angv={t:'السرعة الزاوية (ω)',sec:'ang',dyn:1,jl:'الإيقاف عند زاوية:',jp:[['90°',0],['180°',1],['360°',2]],T:()=>12,
+ leg:[['#22c55e','السرعة الخطية v = ω·r'],['#fde047','الزاوية المقطوعة θ'],['#34d399','قوس طوله r (يقابل 1 rad)']],
+ pr:[['w','السرعة الزاوية ω₀ (rad/s)',.2,6,.1,1.5],['al','التسارع الزاوي α (rad/s²)',-1,1,.1,0],['r','نصف القطر r (m)',.5,2,.1,1]],
+ law:'ω = Δθ/Δt = 2π/T = 2πf ، 1 rad = 180°/π ≈ 57.3°<br>θ = ω₀t + ½αt² ، ω = ω₀ + αt<br>v = ω·r ، a_c = ω²r = v²/r',
+ jump(i){const tg=[PI/2,PI,2*PI][i],w=P.w,a=P.al;let t=NaN;
+  if(Math.abs(a)<1e-6)t=tg/w;else{const d=w*w+2*a*tg;if(d>=0){const k=[(-w+Math.sqrt(d))/a,(-w-Math.sqrt(d))/a].filter(x=>x>0);if(k.length)t=Math.min(...k);}}
+  if(isFinite(t))D.t=Math.min(12,t);},
+ draw(t,P){const c=c1,O=200,R=60+P.r*45,th=P.w*t+P.al*t*t/2,om=P.w+P.al*t,v=om*P.r,thn=((th%(2*PI))+2*PI)%(2*PI);
+  c.beginPath();c.arc(O,O,R,0,2*PI);c.strokeStyle='#334155';c.lineWidth=2;c.stroke();
+  for(let k=0;k<12;k++){const a=k*PI/6;line(c,O+(R-6)*Math.cos(a),O-(R-6)*Math.sin(a),O+(R+6)*Math.cos(a),O-(R+6)*Math.sin(a),'#64748b',1.5);c.fillStyle='#94a3b8';c.font='10px system-ui';c.fillText(k*30+'°',O+(R+18)*Math.cos(a)-8,O-(R+18)*Math.sin(a)+3);}
+  line(c,O,O,O+R+8,O,'#94a3b8',1.5,[4,4]);
+  arc(c,O,O,R,-1,0,'#34d399','',0,5);c.fillStyle='#34d399';c.font='bold 11px system-ui';c.fillText('قوس = r',O+(R-26)*Math.cos(.5)-22,O-(R-26)*Math.sin(.5)+4);
+  const bx=O+R*Math.cos(th),by=O-R*Math.sin(th);line(c,O,O,bx,by,'#64748b',2);
+  arc(c,O,O,38,-thn,0,AC,'θ = '+f2(thn)+' rad',64,3);
+  arrow(c,bx,by,-Math.sin(th)*v,Math.cos(th)*v,Math.min(15,80/Math.max(Math.abs(v),.1)),'#22c55e','v = '+f2(v)+' m/s');ball(c,bx,by);
+  plots([{n:'θ (rad)',f:s=>P.w*s+P.al*s*s/2,col:'#fde047'},{n:'ω (rad/s)',f:s=>P.w+P.al*s,col:'#38bdf8'},{n:'v = ωr (m/s)',f:s=>(P.w+P.al*s)*P.r,col:'#22c55e'}],12,t);},
+ info(t,P){const th=P.w*t+P.al*t*t/2,om=P.w+P.al*t,T0=Math.abs(om)>1e-6?2*PI/Math.abs(om):Infinity;
+  return `<div>θ = ω₀t + ½αt² = ${P.w}×${f2(t)} + ½×${P.al}×${f2(t)}² = <code>${f2(th)} rad</code> = <code>${f2(th*180/PI,1)}°</code> (<code>${f2(th/2/PI)}</code> دورة)</div><div>ω الآن = ω₀ + αt = <code>${f2(om)} rad/s</code> = <code>${f2(om*60/2/PI,1)} rpm</code></div><div>الزمن الدوري T = 2π/ω = <code>${isFinite(T0)?f2(T0)+' s':'∞'}</code> ، التردد f = <code>${isFinite(T0)?f2(1/T0):'0'} Hz</code></div><div>v = ω·r = ${f2(om)}×${P.r} = <code>${f2(om*P.r)} m/s</code> ، a_c = ω²r = <code>${f2(om*om*P.r)} m/s²</code></div><div>طول القوس المقطوع s = θ·r = <code>${f2(th*P.r)} m</code></div>`;}};
+M.disk={t:'السرعة الخطية على قرص',sec:'ang',dyn:1,jl:'اختيارات:',jp:[['اقطع النقطة 2',0],['أعد الربط',1]],T:()=>12,
+ jump(i){D.cut=i?null:D.t;paused=false;upPlay();},
+ leg:[['#38bdf8','النقطة 1'],['#f59e0b','النقطة 2'],['#22c55e','السرعة المماسية (v)']],
+ pr:[['w','السرعة الزاوية ω (rad/s)',.5,6,.1,2],['r1','نصف القطر r₁ (m)',.3,2,.1,.8],['r2','نصف القطر r₂ (m)',1,3,.1,2]],
+ law:'ω واحدة لكل نقاط الجسم الصلب<br>v = ω·r  ⇒  v₂ / v₁ = r₂ / r₁<br>a_c = ω²r = v²/r ، عند القطع تنطلق النقطة مماسياً بـ v',
+ draw(t,P){const c=c1,O=200,pp=43,th=P.w*t,ct=D.cut,on=ct!=null&&t>=ct,v1=P.w*P.r1,v2=P.w*P.r2,Rd=P.r2*pp+14;
+  c.beginPath();c.arc(O,O,Rd,0,2*PI);c.fillStyle='#1e293b';c.fill();c.strokeStyle='#475569';c.lineWidth=3;c.stroke();
+  line(c,O,O,O+Rd*Math.cos(th),O-Rd*Math.sin(th),'#475569',2);
+  const p1=[O+P.r1*pp*Math.cos(th),O-P.r1*pp*Math.sin(th)];let p2=[O+P.r2*pp*Math.cos(th),O-P.r2*pp*Math.sin(th)],a2=th;
+  if(on){a2=P.w*ct;const s=t-ct;p2=[O+P.r2*pp*Math.cos(a2)-v2*s*pp*Math.sin(a2),O-P.r2*pp*Math.sin(a2)-v2*s*pp*Math.cos(a2)];}
+  const sc=Math.min(10,90/Math.max(v1,v2,1));
+  arrow(c,p1[0],p1[1],-Math.sin(th)*v1,Math.cos(th)*v1,sc,'#22c55e','v₁ = '+f2(v1));
+  arrow(c,p2[0],p2[1],-Math.sin(a2)*v2,Math.cos(a2)*v2,sc,'#22c55e','v₂ = '+f2(v2));
+  ball(c,p1[0],p1[1]);c.beginPath();c.arc(p2[0],p2[1],12,0,2*PI);c.fillStyle='#f59e0b';c.fill();c.strokeStyle='#b45309';c.lineWidth=2;c.stroke();
+  c.fillStyle='#0f172a';c.font='bold 11px system-ui';c.fillText('1',p1[0]-3,p1[1]+4);c.fillText('2',p2[0]-3,p2[1]+4);
+  if(on){c.fillStyle='#fbbf24';c.font='bold 12px system-ui';c.fillText('انقطعت الصلة: النقطة 2 تنطلق مماسياً',60,24);}
+  bars([['ω',P.w,'#fde047'],['v₁',v1,'#38bdf8'],['v₂',v2,'#f59e0b'],['a_c1',P.w*P.w*P.r1,'#ef4444'],['a_c2',P.w*P.w*P.r2,'#a855f7']],'مقارنة القيم');},
+ info(t,P){const v1=P.w*P.r1,v2=P.w*P.r2;return `<div>① ω = <code>${P.w} rad/s</code> للنقطتين معاً (ثابتة عند كل r)</div><div>② v₁ = ωr₁ = ${P.w}×${P.r1} = <code>${f2(v1)} m/s</code></div><div>③ v₂ = ωr₂ = ${P.w}×${P.r2} = <code>${f2(v2)} m/s</code></div><div>④ v₂/v₁ = <code>${f2(v2/v1)}</code> = r₂/r₁ = <code>${f2(P.r2/P.r1)}</code> ✓</div><div>⑤ a_c₁ = ω²r₁ = <code>${f2(P.w*P.w*P.r1)}</code> ، a_c₂ = <code>${f2(P.w*P.w*P.r2)} m/s²</code></div>`;}};
+M.gears={t:'ترسان متلامسان',sec:'ang',dyn:1,jl:'الإيقاف عند:',jp:[['البداية',0],['دورة للترس 1',1],['النهاية',2]],T:()=>12,
+ jump(i){D.t=i==0?0:i==1?Math.min(12,2*PI/P.w):12;},
+ leg:[['#38bdf8','الترس 1'],['#f59e0b','الترس 2'],['#22c55e','السرعة الخطية عند التلامس']],
+ pr:[['w','ω₁ للترس الأول (rad/s)',.5,6,.1,3],['r1','نصف القطر r₁ (m)',.5,2,.1,1],['r2','نصف القطر r₂ (m)',.5,3,.1,2]],
+ law:'عند نقطة التلامس: v₁ = v₂  ⇒  ω₁·r₁ = ω₂·r₂<br>ω₂ / ω₁ = r₁ / r₂ = N₂ / N₁  (الأكبر يدور أبطأ)<br>الدورات: N₁·r₁ = N₂·r₂ ، واتجاها الدوران متعاكسان',
+ draw(t,P){const c=c1,pp=Math.min(60,360/(2*(P.r1+P.r2))),y=200,x1=20+P.r1*pp,x2=x1+(P.r1+P.r2)*pp,w2=P.w*P.r1/P.r2,v=P.w*P.r1;
+  [[x1,P.r1,P.w*t,'#38bdf8'],[x2,P.r2,-w2*t,'#f59e0b']].forEach(([x,rr,f,col])=>{c.beginPath();c.arc(x,y,rr*pp,0,2*PI);c.fillStyle=col+'33';c.fill();c.strokeStyle=col;c.lineWidth=3;c.stroke();
+   for(let k=0;k<12;k++){const a=f+k*PI/6;line(c,x,y,x+rr*pp*Math.cos(a),y-rr*pp*Math.sin(a),col,k==0?4:1.2);}});
+  arrow(c,x1+P.r1*pp,y,0,v,Math.min(10,100/Math.max(v,1)),'#22c55e','v = '+f2(v)+' m/s',0,4);
+  bars([['ω₁',P.w,'#38bdf8'],['ω₂',w2,'#f59e0b'],['v (للتلامس)',v,'#22c55e']],'مقارنة القيم');},
+ info(t,P){const w2=P.w*P.r1/P.r2;return `<div>① عند التلامس v = ω₁r₁ = ${P.w}×${P.r1} = <code>${f2(P.w*P.r1)} m/s</code></div><div>② ω₂ = ω₁r₁/r₂ = ${P.w}×${P.r1}/${P.r2} = <code>${f2(w2)} rad/s</code> (عكس الاتجاه)</div><div>③ نسبة السرعتين الزاويتين ω₂/ω₁ = <code>${f2(w2/P.w)}</code> = r₁/r₂ ✓</div><div>④ عدد الدورات حتى الآن: N₁ = <code>${f2(P.w*t/2/PI)}</code> ، N₂ = <code>${f2(w2*t/2/PI)}</code></div>`;}};
+M.roll={t:'عجلة تتدحرج',sec:'ang',dyn:1,jl:'الإيقاف عند:',jp:[['البداية',0],['نصف دورة',1],['دورة كاملة',2]],T:P=>3*PI/P.w,
+ jump(i){D.t=i*PI/P.w;},
+ leg:[['#22c55e','السرعة بالنسبة للأرض'],['#ef4444','نقطة على الحافة ومسارها']],
+ pr:[['R','نصف قطر العجلة R (m)',.3,1.5,.1,.8],['w','السرعة الزاوية ω (rad/s)',.5,5,.1,2]],
+ law:'تدحرج بلا انزلاق: v_cm = ω·R<br>v(نقطة/أرض) = v_cm + v(نقطة/المركز) ، |v(نقطة/المركز)| = ωR<br>أعلى نقطة = 2v ، نقطة التلامس = 0',
+ draw(t,P){const c=c1,v=P.w*P.R,pp=Math.min(60,330/(11.5*P.R)),gy=300,x0=30+P.R*pp,cx=x0+v*t*pp,cy=gy-P.R*pp,Rp=P.R*pp;
+  line(c,5,gy,395,gy,'#475569',4);
+  c.beginPath();for(let k=0;k<=80;k++){const s=t*k/80,px=x0+(v*s-P.R*Math.sin(P.w*s))*pp,py=gy-(P.R-P.R*Math.cos(P.w*s))*pp;k?c.lineTo(px,py):c.moveTo(px,py);}c.strokeStyle='#ef444488';c.lineWidth=2;c.stroke();
+  c.beginPath();c.arc(cx,cy,Rp,0,2*PI);c.fillStyle='#1e293b';c.fill();c.strokeStyle='#38bdf8';c.lineWidth=3;c.stroke();
+  for(let k=0;k<6;k++){const a=-PI/2-P.w*t+k*PI/3;line(c,cx,cy,cx+Rp*Math.cos(a),cy-Rp*Math.sin(a),k==0?'#ef4444':'#64748b',k==0?3:1.5);}
+  const a0=-PI/2-P.w*t;c.beginPath();c.arc(cx+Rp*Math.cos(a0),cy-Rp*Math.sin(a0),5,0,2*PI);c.fillStyle='#ef4444';c.fill();
+  const sc=Math.min(8,100/(2*v));
+  arrow(c,cx,cy-Rp,2*v,0,sc,'#22c55e','2v = '+f2(2*v),0,3);arrow(c,cx,cy,v,0,sc,'#22c55e','v = '+f2(v),0,3);
+  c.beginPath();c.arc(cx,gy,5,0,2*PI);c.fillStyle='#fbbf24';c.fill();c.fillStyle='#fbbf24';c.font='bold 12px system-ui';c.fillText('v = 0 (نقطة التلامس)',cx-50,gy+20);
+  bars([['أسفل',0,'#fbbf24'],['المركز v',v,'#22c55e'],['أعلى 2v',2*v,'#38bdf8']],'سرعة النقاط بالنسبة للأرض');},
+ info(t,P){const v=P.w*P.R;return `<div>① v_cm = ω·R = ${P.w}×${P.R} = <code>${f2(v)} m/s</code></div><div>② أعلى نقطة: v = v_cm + ωR = <code>${f2(2*v)} m/s</code></div><div>③ نقطة التلامس: v = v_cm − ωR = <code>0</code> (لحظياً ساكنة)</div><div>④ من مركز العجلة كل نقاط الحافة تدور بـ ωR = <code>${f2(v)} m/s</code>، ومن الأرض تُضاف سرعة المركز — وهذا تطبيق مباشر للسرعة النسبية.</div><div>المسافة المقطوعة x = v·t = <code>${f2(v*t)} m</code> = θ·R ، θ = <code>${f2(P.w*t)} rad</code></div>`;}};
+M.relv={t:'السرعة النسبية (سيارتان)',sec:'vec',dyn:1,jl:'اختيارات:',jp:[['من الأرض',0],['من السيارة B',1],['نفس الاتجاه',2],['اتجاهان متعاكسان',3]],
+ leg:[['#38bdf8','السيارة A'],['#f59e0b','السيارة B'],['#22c55e','السرعة كما يراها المشاهد']],
+ pr:[['vA','مقدار سرعة A (m/s)',0,30,1,20],['vB','مقدار سرعة B (m/s)',0,30,1,10],['gap','المسافة الابتدائية (m)',20,100,5,60]],
+ law:'الاتجاه الموجب نحو اليمين: v_AB = v_A − v_B<br>نفس الاتجاه: تُطرح السرعتان ⏐ اتجاهان متعاكسان: تُجمع المقدارين<br>t(اللقاء) = المسافة / |v_AB|   ، v_BA = − v_AB',
+ T:P=>rq(P).T,jump(i){if(i<2)D.obs=i;else{D.dir=i-2;D.t=0;}paused=false;upPlay();},
+ draw(t,P,T){const q=rq(P),c=c1,ob=D.obs?1:0,op=D.dir?1:0,xs=s=>{const a=q.uA*s,b=P.gap+q.uB*s,o=ob?b-P.gap:0;return[a-o,b-o];};
+  let lo=-5,hi=P.gap+5;for(let k=0;k<=20;k++){const [a,b]=xs(T*k/20);lo=Math.min(lo,a,b);hi=Math.max(hi,a,b);}
+  const pp=330/(hi-lo+10),ox=30-lo*pp,[a,b]=xs(t),yA=270,yB=op?205:270;
+  c.fillStyle='#94a3b8';c.font='bold 13px system-ui';c.fillText('المشاهد: '+(ob?'السيارة B (تبدو ساكنة)':'الأرض')+' — '+(op?'اتجاهان متعاكسان':'نفس الاتجاه'),8,20);
+  line(c,5,yA+4,395,yA+4,'#475569',4);if(op)line(c,5,yB+4,395,yB+4,'#475569',4);
+  if(q.tm>0&&q.tm<=T){const mx=ox+xs(q.tm)[0]*pp;line(c,mx,yB-70,mx,yA+10,'#ef4444',1.5,[4,4]);c.fillStyle='#ef4444';c.font='11px system-ui';c.fillText('اللقاء t = '+f2(q.tm)+' s',mx-34,yB-76);}
+  [[a,'#38bdf8','A',q.uA-(ob?q.uB:0),yA,1],[b,'#f59e0b','B',ob?0:q.uB,yB,q.sB]].forEach(([x,col,n,v,y,hd])=>{const px=ox+x*pp;c.fillStyle=col;c.fillRect(px-20,y-24,40,24);c.fillStyle='#fff';c.fillRect(hd>0?px+13:px-20,y-24,7,24);c.fillStyle='#0f172a';c.font='bold 12px system-ui';c.fillText(n,px-4,y-7);
+   arrow(c,px,y-36,v,0,Math.min(5,90/Math.max(Math.abs(v),1)),'#22c55e','v'+n+' = '+f2(v,0)+' m/s');});
+  plots([{n:'xA (m)',f:s=>xs(s)[0],col:'#38bdf8'},{n:'xB (m)',f:s=>xs(s)[1],col:'#f59e0b'},{n:'x_AB = xA − xB (m)',f:s=>xs(s)[0]-xs(s)[1],col:'#22c55e'}],T,t);},
+ info(t,P){const q=rq(P),Bs=q.uB<0?`(${q.uB})`:q.uB;return `<div>الاتجاه الموجب نحو اليمين: v_A = <code>${q.uA}</code> ، v_B = <code>${q.uB} m/s</code></div><div>v_AB = v_A − v_B = ${q.uA} − ${Bs} = <code>${f2(q.d)} m/s</code> (سرعة A كما يراها راكب B)</div><div>v_BA = −v_AB = <code>${f2(-q.d)} m/s</code></div><div>${q.d>0?'سرعة الاقتراب '+f2(q.d)+' m/s ⇒ زمن اللقاء = '+P.gap+' / '+f2(q.d)+' = <code>'+f2(q.tm)+' s</code>':'لا يلتقيان: A لا تقترب من B (v_AB ≤ 0)'}</div><div>${D.dir?'في الاتجاهين المتعاكسين تُجمع المقدارين: '+P.vA+' + '+P.vB+' = '+(P.vA+P.vB)+' m/s':'في الاتجاه نفسه تُطرح السرعتان: '+P.vA+' − '+P.vB+' = '+(P.vA-P.vB)+' m/s'}</div><div>المشاهد: <b>${D.obs?'السيارة B':'الأرض'}</b></div>`;}};
+const ex=P=>{const S2=P.m1+P.m2;return{u1:-Math.sqrt(2*P.E*P.m2/(P.m1*S2)),u2:Math.sqrt(2*P.E*P.m1/(P.m2*S2)),t0:1};};
+M.expl={t:'الانفجار والارتداد',sec:'mom',dyn:1,jp:[['قبل الانفجار',0],['بعد الانفجار',1]],
+ leg:[['#38bdf8','العربة 1'],['#f59e0b','العربة 2'],['#22c55e','السرعة']],
+ pr:[['m1','الكتلة m₁ (kg)',1,10,.5,2],['m2','الكتلة m₂ (kg)',1,10,.5,4],['E','الطاقة المتحررة E (J)',10,200,5,60]],
+ law:'قبل الانفجار: Σp = 0  ⇒  m₁v₁′ + m₂v₂′ = 0<br>v₁′ / v₂′ = − m₂ / m₁   (الأخف أسرع)<br>½m₁v₁′² + ½m₂v₂′² = E',
+ T:()=>5,jump(i){D.t=i?2:0;},
+ draw(t,P){const q=ex(P),c=c1,gy=230,w1=24+4*P.m1,w2=24+4*P.m2,pp=Math.min(16,180/(Math.max(-q.u1,q.u2)*4+1)),d=Math.max(0,t-q.t0);
+  const x1=-w1/2+q.u1*d*pp,x2=w2/2+q.u2*d*pp,v1=t<q.t0?0:q.u1,v2=t<q.t0?0:q.u2;
+  line(c,5,gy+15,395,gy+15,'#475569',4);
+  [[x1,w1,'#38bdf8',P.m1,v1,'v₁′'],[x2,w2,'#f59e0b',P.m2,v2,'v₂′']].forEach(([x,w,col,m,v,n])=>{const px=200+x;c.fillStyle=col;c.fillRect(px-w/2,gy-15,w,30);c.fillStyle='#0f172a';c.font='bold 12px system-ui';c.fillText(m+' kg',px-14,gy+4);arrow(c,px,gy-30,v,0,Math.min(6,90/Math.max(Math.abs(v),1)),'#22c55e',n+' = '+f2(v,1));});
+  if(t<q.t0){c.fillStyle='#fbbf24';c.font='bold 13px system-ui';c.fillText('العربتان ملتصقتان وساكنتان (نابض مضغوط بينهما)',40,60);}
+  const p=s=>s<q.t0?0:P.m1*q.u1+P.m2*q.u2,ke=s=>s<q.t0?0:P.E;
+  plots([{n:'Σp (kg·m/s)',f:p,col:'#a855f7'},{n:'KE (J)',f:ke,col:'#ef4444'}],5,t);},
+ info(t,P){const q=ex(P);return `<div>v₁′ = −√(2E·m₂ / m₁(m₁+m₂)) = <code>${f2(q.u1)} m/s</code></div><div>v₂′ = √(2E·m₁ / m₂(m₁+m₂)) = <code>${f2(q.u2)} m/s</code></div><div>Σp بعد = ${P.m1}×(${f2(q.u1)}) + ${P.m2}×${f2(q.u2)} = <code>${f2(P.m1*q.u1+P.m2*q.u2)}</code> ⇒ تساوي صفر ✓</div><div>|v₁′| / |v₂′| = <code>${f2(-q.u1/q.u2)}</code> = m₂/m₁ = <code>${f2(P.m2/P.m1)}</code></div><div>KE = ½×${P.m1}×${f2(q.u1)}² + ½×${P.m2}×${f2(q.u2)}² = <code>${f2(.5*P.m1*q.u1**2+.5*P.m2*q.u2**2)} J</code> = E</div>`;}};
+const cp=P=>{const a=P.al*PI/180,R=P.L*Math.sin(a),v=Math.sqrt(g*R*Math.tan(a)),w=v/R;return{a,R,v,w,T0:2*PI/w,Tn:g/Math.cos(a),Fc:g*Math.tan(a)};};
+M.cpend={t:'النواس المخروطي',sec:'circ',dyn:1,jp:[['0°',0],['90°',1],['180°',2],['270°',3]],
+ leg:[['#3b82f6','الشد (T)'],[WC,'الوزن (mg)'],['#f59e0b','T·sinα = القوة المركزية'],['#06b6d4','T·cosα = يعادل الوزن'],['#22c55e','السرعة (v)']],
+ pr:[['L','طول الخيط L (m)',1,3,.1,2],['al','زاوية الخيط عن الرأسي α (°)',15,70,1,40]],
+ law:'T·cosα = mg ، T·sinα = mv²/R<br>R = L·sinα ، v = √(g·R·tanα)<br>الزمن الدوري T₀ = 2π√(L·cosα / g)',
+ T:P=>2*cp(P).T0,jump(i){D.t=i*cp(P).T0/4;},
+ draw(t,P){const q=cp(P),c=c1,pp=Math.min(80,300/P.L),X0=200,Y0=60,bx=X0+q.R*pp,by=Y0+P.L*Math.cos(q.a)*pp,fs=Math.min(4,100/q.Tn),sa=Math.sin(q.a),ca=Math.cos(q.a);
+  line(c,X0,Y0,X0,by+30,'#334155',1.5,[4,4]);line(c,X0-40,Y0,X0+40,Y0,'#64748b',4);line(c,X0,Y0,bx,by,'#94a3b8',2);line(c,X0,by,bx,by,'#64748b',1.5,[3,4]);
+  arrow(c,bx,by,-q.Tn*sa,q.Tn*ca,fs,'#3b82f6','T');arrow(c,bx,by,-q.Tn*sa,0,fs,'#f59e0b','T·sinα',1);arrow(c,bx,by,0,q.Tn*ca,fs,'#06b6d4','T·cosα',1);
+  ball(c,bx,by);wArrow(c,bx,by,fs);arc(c,X0,Y0,40,PI/2-q.a,PI/2,AC,'α = '+P.al+'°',62);
+  c.fillStyle='#e2e8f0';c.font='bold 12px system-ui';c.fillText('R = '+f2(q.R)+' m',(X0+bx)/2-30,by+18);
+  const d=c2,o=200,p2=Math.min(90,160/q.R),ph=q.w*t,tx=o+q.R*p2*Math.cos(ph),ty=o-q.R*p2*Math.sin(ph),s2=Math.min(3,60/q.Fc);
+  d.fillStyle='#94a3b8';d.font='12px system-ui';d.fillText('منظر علوي',8,16);
+  d.beginPath();d.arc(o,o,q.R*p2,0,2*PI);d.strokeStyle='#334155';d.lineWidth=3;d.setLineDash([6,6]);d.stroke();d.setLineDash([]);
+  line(d,o,o,tx,ty,'#64748b',1.5,[3,5]);
+  arrow(d,tx,ty,-q.v*Math.sin(ph),q.v*Math.cos(ph),18,'#22c55e','v');arrow(d,tx,ty,-Math.cos(ph)*q.Fc,-Math.sin(ph)*q.Fc,s2,'#f59e0b','Fc');ball(d,tx,ty);},
+ info(t,P){const q=cp(P);return `<div>① رأسياً: T·cosα = mg ⇒ T = 9.81 / cos${P.al}° = <code>${f2(q.Tn)} N</code></div><div>② أفقياً: T·sinα = mv²/R ⇒ Fc = mg·tanα = <code>${f2(q.Fc)} N</code></div><div>③ R = L·sinα = ${P.L}×sin${P.al}° = <code>${f2(q.R)} m</code></div><div>④ v = √(gR·tanα) = <code>${f2(q.v)} m/s</code> ، T₀ = 2π√(L·cosα/g) = <code>${f2(q.T0)} s</code></div><div>كلما كبرت α زادت السرعة والشد. الكتلة لا تدخل في v.</div>`;}};
+
+const rad=PI/180,vec=(v,a)=>[v*Math.cos(a*rad),v*Math.sin(a*rad)],dot=(a,b)=>a[0]*b[0]+a[1]*b[1],hyp=a=>Math.hypot(a[0],a[1]);
+function dev(c,O,a,b,rad_,col,txt){const A=Math.atan2(a[1],a[0]),B=Math.atan2(b[1],b[0]),d=((-B+A+PI)%(2*PI)+2*PI)%(2*PI)-PI,c0=-A;arc(c,O[0],O[1],rad_,Math.min(c0,c0+d),Math.max(c0,c0+d),col,txt,rad_+20,3);}
+function pdiag(c,O,s,list,res,tit){c.fillStyle='#94a3b8';c.font='bold 12px system-ui';c.fillText(tit,O[0]-60,O[1]-92);
+ let x=0,y=0;list.forEach(([v,col,n])=>{arrow(c,O[0]+x*s,O[1]-y*s,v[0],v[1],s,col,n,0,3);x+=v[0];y+=v[1];});
+ arrow(c,O[0],O[1],res[0],res[1],s,'#3b82f6','Σp',0,4);}
+const c2d=P=>{let l=vec(1,P.ps);const a=vec(P.v1,P.t1),b=vec(P.v2,P.t2);if(dot([a[0]-b[0],a[1]-b[1]],l)<0)l=[-l[0],-l[1]];
+ const an=dot([a[0]-b[0],a[1]-b[1]],l),hit=an>1e-6,m1=P.m1,m2=P.m2,e=P.e,n1=dot(a,l),n2=dot(b,l);let a2=a,b2=b;
+ if(hit&&D.stick){const v=[(m1*a[0]+m2*b[0])/(m1+m2),(m1*a[1]+m2*b[1])/(m1+m2)];a2=v;b2=v;}
+ else if(hit){const k1=((m1-e*m2)*n1+m2*(1+e)*n2)/(m1+m2),k2=((m2-e*m1)*n2+m1*(1+e)*n1)/(m1+m2);a2=[a[0]+(k1-n1)*l[0],a[1]+(k1-n1)*l[1]];b2=[b[0]+(k2-n2)*l[0],b[1]+(k2-n2)*l[1]];}
+ const vm=Math.max(hyp(a),hyp(b),hyp(a2),hyp(b2),1);return{l,a,b,a2,b2,hit,tc:1.5,T:4,pp:170/(2.5*vm)};};
+M.col2={t:'التصادم في بعدين',sec:'mom',dyn:1,jl:'النوع / الإيقاف:',jp:[['تفرّق',0],['التصاق',1],['لحظة التصادم',2],['بعد التصادم',3]],
+ leg:[['#38bdf8','الكرة 1'],['#f59e0b','الكرة 2'],['#22c55e','السرعة (v)'],['#3b82f6','المجموع Σp (محفوظ)']],
+ pr:[['m1','الكتلة m₁ (kg)',1,10,.5,2],['v1','السرعة v₁ (m/s)',0,10,.5,5],['t1','اتجاه v₁ (°)',0,360,5,0],['m2','الكتلة m₂ (kg)',1,10,.5,2],['v2','السرعة v₂ (m/s)',0,10,.5,0],['t2','اتجاه v₂ (°)',0,360,5,180],['ps','زاوية خط المركزين ψ (°)',0,360,5,30],['e','معامل الارتداد e (تفرّق فقط)',0,1,.05,1]],
+ law:'Σpx قبل = Σpx بعد   (البعد الأفقي)<br>Σpy قبل = Σpy بعد   (البعد الرأسي)<br>الدفع على خط المركزين فقط: المركبة المماسية لا تتغير<br>تفرّق: e = (v₂′ − v₁′)ₙ / (v₁ − v₂)ₙ ⏐ التصاق: v′ = (m₁v₁ + m₂v₂)/(m₁+m₂)',
+ T:()=>4,jump(i){if(i<2){D.stick=i;D.t=0;paused=false;upPlay();}else D.t=i==2?1.5:2.5;},
+ draw(t,P){const q=c2d(P),c=c1,r1=12+3*P.m1,r2=12+3*P.m2,s=t-q.tc,A=t<q.tc?q.a:q.a2,B=t<q.tc?q.b:q.b2,pp=q.pp,l=q.l,W=(o,v)=>[200+o[0]+v[0]*s*pp,200-o[1]-v[1]*s*pp];
+  const p1=W([-l[0]*r1,-l[1]*r1],A),p2=W([l[0]*r2,l[1]*r2],B),sc=Math.min(8,50/Math.max(hyp(q.a),hyp(q.b),1));
+  c.fillStyle='#94a3b8';c.font='bold 12px system-ui';c.fillText(D.stick?'نوع التصادم: التصاق':'نوع التصادم: تفرّق (e = '+P.e+')',8,18);
+  line(c,200-l[0]*90,200+l[1]*90,200+l[0]*90,200-l[1]*90,'#94a3b8',1.5,[4,4]);c.fillStyle='#94a3b8';c.font='11px system-ui';c.fillText('خط المركزين',200+l[0]*92,200-l[1]*92);
+  arc(c,200,200,34,-Math.atan2(l[1],l[0]),0,AC,'ψ='+Math.round(Math.atan2(l[1],l[0])/rad+360)%360+'°',54,2);
+  [[p1,r1,'#38bdf8','1',A],[p2,r2,'#f59e0b','2',B]].forEach(([p,r_,col,n,v])=>{c.beginPath();c.arc(p[0],p[1],r_,0,2*PI);c.fillStyle=col;c.fill();c.fillStyle='#0f172a';c.font='bold 12px system-ui';c.fillText(n,p[0]-4,p[1]+4);arrow(c,p[0],p[1],v[0],v[1],sc,'#22c55e','v'+n+' '+f2(hyp(v),1));});
+  const k=[P.m1*q.a[0]+P.m2*q.b[0],P.m1*q.a[1]+P.m2*q.b[1]],p1v=[P.m1*q.a[0],P.m1*q.a[1]],p2v=[P.m2*q.b[0],P.m2*q.b[1]],q1=[P.m1*q.a2[0],P.m1*q.a2[1]],q2=[P.m2*q.b2[0],P.m2*q.b2[1]],mx=Math.max(hyp(k),hyp(p1v),hyp(p2v),hyp(q1),hyp(q2),1),S=100/mx;
+  pdiag(c2,[120,150],S,[[p1v,'#38bdf8','p₁'],[p2v,'#f59e0b','p₂']],k,'قبل: p₁ + p₂ = Σp');
+  pdiag(c2,[120,330],S,[[q1,'#38bdf8',"p₁′"],[q2,'#f59e0b',"p₂′"]],k,'بعد: p₁′ + p₂′ = Σp (نفسه)');},
+ info(t,P){const q=c2d(P),m1=P.m1,m2=P.m2,px=[m1*q.a[0]+m2*q.b[0],m1*q.a2[0]+m2*q.b2[0]],py=[m1*q.a[1]+m2*q.b[1],m1*q.a2[1]+m2*q.b2[1]],ke=(a,b)=>.5*m1*dot(a,a)+.5*m2*dot(b,b),kb=ke(q.a,q.b),ka=ke(q.a2,q.b2);
+  if(!q.hit)return '<div class="warn">لا يحدث تصادم: السرعة النسبية عمودية على خط المركزين. غيّر ψ أو الاتجاهين.</div>';
+  const sp=Math.acos(Math.max(-1,Math.min(1,dot(q.a2,q.b2)/(hyp(q.a2)*hyp(q.b2)||1))))/rad;
+  return `<div><b>البعد الأفقي x:</b> Σpx قبل = ${m1}×${f2(q.a[0])} + ${m2}×${f2(q.b[0])} = <code>${f2(px[0])}</code> ← بعد = <code>${f2(px[1])}</code> ${Math.abs(px[0]-px[1])<1e-6?'✓':''}</div><div><b>البعد الرأسي y:</b> Σpy قبل = <code>${f2(py[0])}</code> ← بعد = <code>${f2(py[1])} kg·m/s</code> ${Math.abs(py[0]-py[1])<1e-6?'✓':''}</div><div>بعد التصادم: v₁′ = (${f2(q.a2[0])} , ${f2(q.a2[1])}) ، v₂′ = (${f2(q.b2[0])} , ${f2(q.b2[1])}) m/s</div><div>الزاوية بين الكرتين بعد التصادم: <code>${D.stick?'0° (ملتصقتان)':f2(sp,1)+'°'}</code></div><div>الطاقة الحركية: قبل <code>${f2(kb)} J</code> ← بعد <code>${f2(ka)} J</code> ، الفقد <code>${f2(kb-ka)} J</code> ${Math.abs(kb-ka)<1e-6?'(مرن: محفوظة)':'(غير محفوظة)'}</div>`;}};
+const RKC=[230,210];
+const rkJ=P=>{const a=vec(P.v2,P.ph);return[P.m*(a[0]-P.v1),P.m*a[1]];};
+const smT=P=>{const J=rkJ(P);if(hyp(J)<1e-9)return P.ta;return((Math.atan2(J[1],J[0])/rad+90)%180+180)%180;};
+function rkSet(e){const el=$('cvSide'),r=el.getBoundingClientRect(),x=(e.clientX-r.left)*400/r.width,y=(e.clientY-r.top)*400/r.height;setParam('ta',Math.round(((Math.atan2(y-RKC[1],-(x-RKC[0]))/rad)%180+180)%180));}
+{const el=$('cvSide');let dr=false;el.addEventListener('pointerdown',e=>{if(mode==='racket'){dr=true;rkSet(e);}});el.addEventListener('pointermove',e=>{if(dr&&mode==='racket')rkSet(e);});['pointerup','pointerleave','pointercancel'].forEach(n=>el.addEventListener(n,()=>{dr=false;}));}
+M.racket={t:'المضرب والكرة',sec:'mom',dyn:1,jl:'حالات جاهزة / إيقاف:',
+ jp:[['قفاز (تقف)',0],['ارتداد للخلف',1],['انحراف 90°',2],['مثال: 4 ← 14 ، 120°',3],['اضبط الميل (أملس)',4],['قبل الضرب',5],['لحظة الضرب',6],['بعد الضرب',7]],
+ leg:[['#22c55e','سرعة الكرة'],['#ef4444','الدفع J (ناتج)'],['#fde047','ميل المضرب'],['#f472b6','زاوية الارتداد'],['#94a3b8','العمودي على المضرب']],
+ pr:[['m','كتلة الكرة m (kg)',.1,2,.1,1],['v1','سرعة الكرة قبل الضرب v₁ (m/s)',1,30,.5,4],['v2','سرعة الكرة بعد الضرب v₂ (m/s)',0,30,.5,14],['ph','زاوية الارتداد (°)',0,360,1,120],['ta','ميل المضرب — اسحب المقبض (°)',0,180,1,42]],
+ law:'J = Δp = m·v₂ − m·v₁   (بالمتجهات)<br>Ix = m(v₂ₓ − v₁ₓ) ، Iy = m(v₂ᵧ − v₁ᵧ)<br>مضرب أملس ⇒ J عمودي على المضرب (Jt = 0)',
+ T:()=>4,
+ jump(i){if(i<5){if(i==0){setParam('v2',0);setParam('ta',90);}else if(i==1){setParam('ph',180);setParam('v2',P.v1);setParam('ta',90);}else if(i==2){setParam('ph',90);setParam('v2',P.v1);setParam('ta',45);}else if(i==3){setParam('v1',4);setParam('v2',14);setParam('ph',120);setParam('ta',smT(P));}else setParam('ta',smT(P));D.t=0;paused=false;upPlay();}else D.t=i==5?0:i==6?1.5:3;},
+ draw(t,P){const c=c1,C=RKC,ta=P.ta*rad,tg=[Math.cos(ta),Math.sin(ta)],nn=[-tg[1],tg[0]],a=[P.v1,0],b=vec(P.v2,P.ph),J=rkJ(P),pp=170/(2.5*Math.max(P.v1,P.v2,1)),s=t-1.5,no=dot(nn,[1,0])>0?[-nn[0],-nn[1]]:nn,
+  Cb=[C[0]+no[0]*10,C[1]-no[1]*10],v=t<1.5?a:b,bp=[Cb[0]+v[0]*s*pp,Cb[1]-v[1]*s*pp],ok=hyp(J)<1e-9||Math.abs(dot(J,tg))<=.03*hyp(J);
+  line(c,C[0]-110,C[1],C[0]+120,C[1],'#475569',1,[4,4]);line(c,C[0]-nn[0]*80,C[1]+nn[1]*80,C[0]+nn[0]*80,C[1]-nn[1]*80,'#94a3b8',1.5,[4,4]);c.fillStyle='#94a3b8';c.font='11px system-ui';c.fillText('العمودي',C[0]+nn[0]*84,C[1]-nn[1]*84);
+  const H=[C[0]+tg[0]*70,C[1]-tg[1]*70],K=[C[0]-tg[0]*70,C[1]+tg[1]*70],M1=[C[0]-tg[0]*20,C[1]+tg[1]*20];
+  line(c,K[0],K[1],M1[0],M1[1],'#92400e',5);line(c,M1[0],M1[1],H[0],H[1],'#d6a35c',11);
+  c.beginPath();c.arc(K[0],K[1],10,0,2*PI);c.fillStyle='#fde047';c.fill();c.fillStyle='#0f172a';c.font='bold 11px system-ui';c.fillText('↻',K[0]-5,K[1]+4);
+  arc(c,C[0],C[1],34,-ta,0,AC,'ميل = '+f2(P.ta,0)+'°',52,2);arc(c,C[0],C[1],62,-P.ph*rad,0,'#f472b6','ارتداد = '+P.ph+'°',84,3);
+  if(t>=1.5&&hyp(J)>1e-9)arrow(c,C[0],C[1],J[0],J[1],Math.min(6,80/hyp(J)),'#ef4444','J = '+f2(hyp(J))+' N·s',0,4);
+  c.beginPath();c.arc(bp[0],bp[1],10,0,2*PI);c.fillStyle='#38bdf8';c.fill();
+  if(hyp(v)>1e-6)arrow(c,bp[0],bp[1],v[0],v[1],Math.min(8,60/Math.max(hyp(v),1)),'#22c55e','v '+f2(hyp(v),1));
+  c.font='bold 12px system-ui';c.fillStyle=ok?'#86efac':'#fbbf24';c.fillText(ok?'✓ مضرب أملس: الدفع عمودي على المضرب':'⚠ ميل غير متسق: يلزم احتكاك (دفع مماسي)',8,20);
+  const ma=[P.m*a[0],0],mb=[P.m*b[0],P.m*b[1]],S=150/Math.max(hyp(ma),hyp(mb),1e-6),O=[220,250];
+  c2.fillStyle='#94a3b8';c2.font='bold 12px system-ui';c2.fillText('مثلث الدفع: m·v₁ + J = m·v₂',8,18);
+  arrow(c2,O[0],O[1],ma[0],ma[1],S,'#22c55e','m·v₁',0,3);arrow(c2,O[0]+ma[0]*S,O[1],J[0],J[1],S,'#ef4444','J',0,3);arrow(c2,O[0],O[1],mb[0],mb[1],S,'#3b82f6','m·v₂',0,4);
+  arc(c2,O[0],O[1],30,-P.ph*rad,0,'#f472b6','φ = '+P.ph+'°',50,3);},
+ info(t,P){const a=[P.v1,0],b=vec(P.v2,P.ph),J=rkJ(P),dv=[b[0]-a[0],b[1]-a[1]],tg=vec(1,P.ta),nn=[-tg[1],tg[0]],Jt=dot(J,tg),Jn=dot(J,nn),ang=x=>((Math.atan2(x[1],x[0])/rad)+360)%360,ok=hyp(J)<1e-9||Math.abs(Jt)<=.03*hyp(J);
+  return `<div>① v₁ = (${f2(P.v1)} , 0) ، v₂ = ${P.v2}×(cos${P.ph}° , sin${P.ph}°) = (<code>${f2(b[0])} , ${f2(b[1])}</code>)</div><div>② Δv = v₂ − v₁ = (<code>${f2(dv[0])} , ${f2(dv[1])}</code>) ⇒ |Δv| = <code>${f2(hyp(dv))} m/s</code> باتجاه <code>${f2(ang(dv),1)}°</code></div><div>③ الدفع J = m·Δv = ${P.m}×Δv = <code>${f2(hyp(J))} N·s</code> باتجاه <code>${f2(ang(J),1)}°</code></div><div>Ix = Δpx = <code>${f2(J[0])}</code> ، Iy = Δpy = <code>${f2(J[1])} N·s</code></div><div>④ بالنسبة لوجه المضرب (ميل ${f2(P.ta,0)}°): Jn = <code>${f2(Jn)}</code> ، Jt = <code>${f2(Jt)} N·s</code></div>`+(ok?'<div>✓ Jt ≈ 0: الدفع عمودي على المضرب، فهو مضرب أملس ويتسق مع اختيارك.</div>':`<div class="warn">⚠ الدفع المماسي ${f2(Math.abs(Jt))} N·s: هذه الضربة تحتاج احتكاكاً. الميل الأملس المتسق مع اختيارك هو <code>${f2(smT(P),1)}°</code> (زر «اضبط الميل»).</div>`)+`<div>⑤ التغير في الطاقة الحركية ½m(v₂² − v₁²) = <code>${f2(.5*P.m*(P.v2*P.v2-P.v1*P.v1))} J</code></div>`;}};
+setMode('string');requestAnimationFrame(frame);
+</script>
+</body>
+</html>
